@@ -71,7 +71,7 @@ for SMI in SMIs:
 	# for i in range(1, maxlen-1):
 	# 	output_row.append(SMI_monthly_forecast[0][i])
 
-# Print out each monthly forecast
+# Print out each daily forecast
 	maxlen = len(SMI_monthly_forecast[0])
 	for i in range(0, maxlen-1):
 		output_row.append(SMI_daily_forecast[i])
