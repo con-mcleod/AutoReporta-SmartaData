@@ -3,53 +3,35 @@
 import sys, csv, os, sqlite3, re
 from helper_fns import *
 
-if (len(sys.argv) != 2):
-	print ("Usage: python3 generator.py [output.csv]")
+if (len(sys.argv) != 3):
+	print ("Usage: python3 generator.py [hourly/daily/weekly/fortnightly/monthly] [output.csv]")
 	exit(1)
 
-output_file = sys.argv[1]
+report_frequency = sys.argv[1]
+output_file = sys.argv[2]
 
 if(os.path.exists(output_file)):
 	os.remove(output_file)
 
 SMIs = get_all_SMIs()
 datatypes = get_all_datatypes()
-dates = get_all_dates()
 times = get_all_times()
+days = get_all_days()
+months = get_all_months()
+years = get_all_years()
 datatype = "kWh Generation"
 
-#### TO SET UP TOP ROW ####
-output_row = []
-output_row.append("SMI")
-output_row.append("Ref No")
-output_row.append("ECS")
-output_row.append("Installer")
-output_row.append("PV size")
-output_row.append("Panel make")
-output_row.append("Address")
-output_row.append("State")
-output_row.append("Site status")
-output_row.append("Install date")
-output_row.append("Supply date")
-output_row.append("Export control")
-
-output_row.append("Jan Daily")
-output_row.append("Feb Daily")
-output_row.append("Mar Daily")
-output_row.append("Apr Daily")
-output_row.append("May Daily")
-output_row.append("Jun Daily")
-output_row.append("Jul Daily")
-output_row.append("Aug Daily")
-output_row.append("Sep Daily")
-output_row.append("Oct Daily")
-output_row.append("Nov Daily")
-output_row.append("Dec Daily")
-
-
-for date in dates:
-	output_row.append(date[0])
-	output_row.append("% Perf")
+# FUNCTION TO SET UP CSV HEADINGS
+if (report_frequency == "daily"):
+	daily_top_row()
+elif (report_frequency == "weekly"):
+	weekly_top_row()
+elif (report_frequency == "fortnightly"):
+	fortnightly_top_row()
+elif (report_frequency == "monthly"):
+	monthly_top_row()
+else:
+	exit(1)
 
 write_to_csv(output_file, 'a', output_row)
 

@@ -54,7 +54,7 @@ cursor.execute("""CREATE TABLE forecast(
 	jul FLOAT,
 	aug FLOAT,
 	sep FLOAT,
-	octo FLOAT,
+	oct FLOAT,
 	nov FLOAT,
 	dec FLOAT
 	)""")
@@ -210,7 +210,7 @@ with codecs.open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 			supply_date, export_control) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (SMI, ref_no, ECS, installer, PVsize, panel_brand, address, state, site_status, install_date, supply_date, export_control))
 
 		cursor.execute("""INSERT OR IGNORE INTO forecast(SMI, jan, feb, mar, apr, 
-			may, jun, jul, aug, sep, octo, nov, dec) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+			may, jun, jul, aug, sep, oct, nov, dec) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
 			(SMI, jan, feb, mar, apr, may, jun, jul, aug, sep, octo, nov, dec))
 
 		sf_rowCount += 1

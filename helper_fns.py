@@ -8,7 +8,6 @@ from constants import *
 #######################
 
 def write_to_csv(filename, flag, output_row):
-
 	with open(filename,flag) as csv_out:
 		writer = csv.writer(csv_out)
 		writer.writerow(output_row)
@@ -40,6 +39,46 @@ def month_to_num(month):
 		return 12
 	else:
 		return 0
+
+def daily_top_row():
+	output_row = []
+	output_row.append("SMI")
+	output_row.append("Ref No")
+	output_row.append("ECS")
+	output_row.append("Installer")
+	output_row.append("PV size")
+	output_row.append("Panel make")
+	output_row.append("Address")
+	output_row.append("State")
+	output_row.append("Site status")
+	output_row.append("Install date")
+	output_row.append("Supply date")
+	output_row.append("Export control")
+	output_row.append("Jan Daily")
+	output_row.append("Feb Daily")
+	output_row.append("Mar Daily")
+	output_row.append("Apr Daily")
+	output_row.append("May Daily")
+	output_row.append("Jun Daily")
+	output_row.append("Jul Daily")
+	output_row.append("Aug Daily")
+	output_row.append("Sep Daily")
+	output_row.append("Oct Daily")
+	output_row.append("Nov Daily")
+	output_row.append("Dec Daily")
+
+	for date in dates:
+		output_row.append(date[0])
+		output_row.append("% Perf")
+
+def weekly_top_row():
+	pass
+
+def fortnightly_top_row():
+	pass
+
+def monthly_top_row():
+	pass
 
 #######################
 # Database Handling
@@ -86,11 +125,23 @@ def get_all_datatypes():
 	all_datatypes = dbselect(query, payload)
 	return all_datatypes
 
-def get_all_dates():
-	query = "SELECT distinct(obs_date) from observation"
+def get_all_days():
+	query = "SELECT distinct(obs_day) from observation"
 	payload = None
-	all_dates = dbselect(query, payload)
-	return all_dates
+	all_days = dbselect(query, payload)
+	return all_days
+
+def get_all_months():
+	query = "SELECT distinct(obs_month) from observation"
+	payload = None
+	all_months = dbselect(query, payload)
+	return all_months
+
+def get_all_years():
+	query = "SELECT distinct(obs_year) from observation"
+	payload = None
+	all_years = dbselect(query, payload)
+	return all_years
 
 def get_all_times():
 	query = "SELECT distinct(obs_time) from observation"
