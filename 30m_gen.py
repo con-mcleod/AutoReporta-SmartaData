@@ -17,18 +17,3 @@ datatypes = get_all_datatypes()
 dates = get_all_dates()
 times = get_all_times()
 datatype = "kWh Generation"
-
-#### TO SET UP TOP ROW ####
-output_row = []
-output_row.append("SMI")
-output_row.append("Ref No")
-output_row.append("ECS")
-output_row.append("Installer")
-output_row.append("PV size")
-output_row.append("Panel make")
-output_row.append("Address")
-output_row.append("State")
-output_row.append("Site status")
-output_row.append("Install date")
-output_row.append("Supply date")
-output_row.append("Export control")

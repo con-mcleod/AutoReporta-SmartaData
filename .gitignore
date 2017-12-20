@@ -9,3 +9,6 @@
 
 # ignore CSV folder
 CSV_archive/*
+
+# ignore final reports folder
+final_reports/*

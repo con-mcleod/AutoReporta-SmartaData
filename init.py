@@ -2,7 +2,7 @@
 
 import sys, csv, sqlite3, os, glob, re, shutil, codecs
 from collections import defaultdict
-
+from helper_fns import *
 
 if (len(sys.argv) != 4):
 	print ("Usage: python3 init.py [encompass_file.csv] [salesforce_file.csv] dataset.db")
@@ -21,8 +21,10 @@ cursor = connection.cursor()
 cursor.execute("""CREATE TABLE observation(
 	SMI TEXT,
 	datatype TEXT, 
-	obs_date TEXT,
 	obs_time TEXT,
+	obs_day INT,
+	obs_month TEXT,
+	obs_year INT,
 	value FLOAT
 	)""")
 
@@ -57,23 +59,19 @@ cursor.execute("""CREATE TABLE forecast(
 	dec FLOAT
 	)""")
 
-columns = defaultdict(list)
-
 SMIs = []
 row_count = 0
-
 
 # READ IN ENCOMPASS REPORT
 # Note: this is hardcoded to fit a report using 60 minute intervals
 # Todo: rewrite so that it can handle multiple report formats
+columns = defaultdict(list)
 with codecs.open(enc_dataset,'r', encoding='utf-8', errors='ignore') as enc_in:
 	reader = csv.reader(enc_in)
 	for row in reader:
 		for (i,v) in enumerate(row):
 			columns[i].append(v)
 		row_count += 1
-
-
 
 count = 0
 for col in columns:
@@ -87,8 +85,12 @@ for col in columns:
 	for SMI in SMIs:
 		if SMI:
 			for i in range(row_count-1):
-				cursor.execute("""INSERT INTO observation(SMI, datatype, obs_date, obs_time, value)
-					VALUES (?,?,?,?,?)""", (SMI, data_type, dates[i], times[i], enc_dataset[i]))
+				day = re.sub(r'-.*', '', dates[i])
+				month = re.sub(r'[^a-zA-Z]', '', dates[i])
+				month_num = month_to_num(month)
+				year = re.sub(r'.*-', '', dates[i])
+				cursor.execute("""INSERT INTO observation(SMI, datatype, obs_time, obs_day, obs_month, obs_year, value)
+					VALUES (?,?,?,?,?,?,?)""", (SMI, data_type, times[i], day, month_num, year, enc_dataset[i]))
 	count += 1
 
 sf_rowCount = 0
