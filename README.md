@@ -2,7 +2,7 @@
 
 I am an engineering intern at a major Australian energy retailer. 
 
-Through my work, and in conversations with peers, I have identified that our data management procedures could be improved upon. This repository will be used for the software solution that I have devised to drive such an improvement. 
+Through my work I have identified that their data management procedures could be improved upon. This repository will be used for the software solution that I have devised to drive such an improvement. 
 
 The project is broken down into two main areas:
 
