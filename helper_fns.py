@@ -203,19 +203,38 @@ def monthly_to_weekly(monthly_forecast):
 		weekly_forecast.append(daily_forecast[i]*7)
 	return weekly_forecast
 
+def monthly_to_fortnightly(monthly_forecast):
+	weekly_forecast = []
+	daily_forecast = monthly_to_daily(monthly_forecast)
+	for i in range(0, len(daily_forecast)):
+		fortnightly_forecast.append(daily_forecast[i]*14)
+	return fortnightly_forecast
+
 #######################
 # Encompass Modelling
 #######################
 
-def get_SMI_daily_data(SMI, datatype, day):
-	query = "SELECT sum(value) from observation where SMI=? and obs_date=? and datatype=?"
+def get_SMI_hourly_data(SMI, datatype, obs_time):
+	query = "SELECT value from observation where SMI=? and obs_time=? and datatype=?"
+	payload = (SMI, time, datatype)
+	result = dbselect(query, payload)
+	return result
+
+def get_SMI_daily_data(SMI, datatype, obs_day):
+	query = "SELECT sum(value) from observation where SMI=? and obs_day=? and datatype=?"
 	payload = (SMI, day, datatype)
 	result = dbselect(query, payload)
 	return result
 
-def get_SMI_hourly_data(SMI, datatype, obs_time):
-	query = "SELECT value from observation where SMI=? and obs_time=? and datatype=?"
-	payload = (SMI, time, datatype)
+def get_SMI_weekly_data(SMI, datatype, obs_week):
+	pass
+
+def get_SMI_fortnightly_data(SMI, datatype, obs_fortnight):
+	pass
+
+def get_SMI_monthly_data(SMI, datatype, obs_month):
+	query = "SELECT sum(value) from observation where SMI=? and obs_month=? and datatype=?"
+	payload = (SMI, obs_month, datatype)
 	result = dbselect(query, payload)
 	return result
 
