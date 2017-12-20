@@ -1,0 +1,8 @@
+# ignore csv files
+*.csv
+
+# ignore db files
+*.db
+
+# ignore CSV folder
+CSV_archive/*
