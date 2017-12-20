@@ -41,6 +41,8 @@ def month_to_num(month):
 		return 0
 
 def daily_top_row():
+	days = get_all_days()
+
 	output_row = []
 	output_row.append("SMI")
 	output_row.append("Ref No")
@@ -67,9 +69,11 @@ def daily_top_row():
 	output_row.append("Nov Daily")
 	output_row.append("Dec Daily")
 
-	for date in dates:
-		output_row.append(date[0])
+	for day in days:
+		output_row.append(day[0])
 		output_row.append("% Perf")
+
+	return output_row
 
 def weekly_top_row():
 	pass
@@ -169,6 +173,8 @@ def get_SMI_forecast(SMI):
 def monthly_to_daily(monthly_forecast):
 	results = []
 	for i in range(1, len(monthly_forecast[0])):
+		if not int(monthly_forecast[0][i]):
+			return 0
 		if i == JAN:
 			result = monthly_forecast[0][i]/days_in_jan
 		if i == FEB:
@@ -216,13 +222,13 @@ def monthly_to_fortnightly(monthly_forecast):
 
 def get_SMI_hourly_data(SMI, datatype, obs_time):
 	query = "SELECT value from observation where SMI=? and obs_time=? and datatype=?"
-	payload = (SMI, time, datatype)
+	payload = (SMI, obs_time, datatype)
 	result = dbselect(query, payload)
 	return result
 
 def get_SMI_daily_data(SMI, datatype, obs_day):
 	query = "SELECT sum(value) from observation where SMI=? and obs_day=? and datatype=?"
-	payload = (SMI, day, datatype)
+	payload = (SMI, obs_day, datatype)
 	result = dbselect(query, payload)
 	return result
 

@@ -23,18 +23,18 @@ datatype = "kWh Generation"
 
 # FUNCTION TO SET UP CSV HEADINGS
 if (report_frequency == "daily"):
-	daily_top_row()
+	output_row = daily_top_row()
 elif (report_frequency == "weekly"):
-	weekly_top_row()
+	output_row = weekly_top_row()
 elif (report_frequency == "fortnightly"):
-	fortnightly_top_row()
+	output_row = fortnightly_top_row()
 elif (report_frequency == "monthly"):
-	monthly_top_row()
+	output_row = monthly_top_row()
 else:
 	exit(1)
-
 write_to_csv(output_file, 'a', output_row)
 
+# For each SMI, begin the data writing process
 for SMI in SMIs:
 
 	output_row = []
@@ -58,11 +58,11 @@ for SMI in SMIs:
 	for i in range(0, maxlen-1):
 		output_row.append(SMI_daily_forecast[i])
 	
-	for date in dates:
+	for day in days:
 
-		daily_kWh_gen = get_SMI_daily_data(SMI[0], datatype, date[0])[0][0]
+		daily_kWh_gen = get_SMI_daily_data(SMI[0], datatype, day[0])[0][0]
 
-		month = re.sub(r'[^a-zA-Z]', '', date[0])
+		month = re.sub(r'[^a-zA-Z]', '', day[0])
 		daily_perf = get_daily_performance(daily_kWh_gen, month, SMI_daily_forecast)
 
 		if daily_kWh_gen is None:
