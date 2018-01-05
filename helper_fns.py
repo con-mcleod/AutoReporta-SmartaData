@@ -40,49 +40,6 @@ def month_to_num(month):
 	else:
 		return 0
 
-def daily_top_row():
-	days = get_all_days()
-
-	output_row = []
-	output_row.append("SMI")
-	output_row.append("Ref No")
-	output_row.append("ECS")
-	output_row.append("Installer")
-	output_row.append("PV size")
-	output_row.append("Panel make")
-	output_row.append("Address")
-	output_row.append("State")
-	output_row.append("Site status")
-	output_row.append("Install date")
-	output_row.append("Supply date")
-	output_row.append("Export control")
-	output_row.append("Jan Daily")
-	output_row.append("Feb Daily")
-	output_row.append("Mar Daily")
-	output_row.append("Apr Daily")
-	output_row.append("May Daily")
-	output_row.append("Jun Daily")
-	output_row.append("Jul Daily")
-	output_row.append("Aug Daily")
-	output_row.append("Sep Daily")
-	output_row.append("Oct Daily")
-	output_row.append("Nov Daily")
-	output_row.append("Dec Daily")
-
-	for day in days:
-		output_row.append(day[0])
-		output_row.append("% Perf")
-
-	return output_row
-
-def weekly_top_row():
-	pass
-
-def fortnightly_top_row():
-	pass
-
-def monthly_top_row():
-	pass
 
 #######################
 # Database Handling
@@ -209,13 +166,6 @@ def monthly_to_weekly(monthly_forecast):
 		weekly_forecast.append(daily_forecast[i]*7)
 	return weekly_forecast
 
-def monthly_to_fortnightly(monthly_forecast):
-	weekly_forecast = []
-	daily_forecast = monthly_to_daily(monthly_forecast)
-	for i in range(0, len(daily_forecast)):
-		fortnightly_forecast.append(daily_forecast[i]*14)
-	return fortnightly_forecast
-
 #######################
 # Encompass Modelling
 #######################
@@ -232,10 +182,13 @@ def get_SMI_daily_data(SMI, datatype, obs_day):
 	result = dbselect(query, payload)
 	return result
 
-def get_SMI_weekly_data(SMI, datatype, obs_week):
-	pass
+def get_month(SMI, datatype, obs_day):
+	query = "SELECT obs_month from observation where SMI=? and obs_day=? and datatype=?"
+	payload = (SMI, obs_day, datatype)
+	result = dbselect(query, payload)
+	return result
 
-def get_SMI_fortnightly_data(SMI, datatype, obs_fortnight):
+def get_SMI_weekly_data(SMI, datatype, obs_week):
 	pass
 
 def get_SMI_monthly_data(SMI, datatype, obs_month):
@@ -245,28 +198,29 @@ def get_SMI_monthly_data(SMI, datatype, obs_month):
 	return result
 
 def get_daily_performance(daily_kWh_gen, month, SMI_daily_forecast):
-	if month == "Jan":
+
+	if month == 1:
 		result = daily_kWh_gen / SMI_daily_forecast[0]
-	elif month == "Feb":
+	elif month == 2:
 		result = daily_kWh_gen / SMI_daily_forecast[1]
-	elif month == "Mar":
+	elif month == 3:
 		result = daily_kWh_gen / SMI_daily_forecast[2]
-	elif month == "Apr":
+	elif month == 4:
 		result = daily_kWh_gen / SMI_daily_forecast[3]
-	elif month == "May":
+	elif month == 5:
 		result = daily_kWh_gen / SMI_daily_forecast[4]
-	elif month == "Jun":
+	elif month == 6:
 		result = daily_kWh_gen / SMI_daily_forecast[5]
-	elif month == "Jul":
+	elif month == 7:
 		result = daily_kWh_gen / SMI_daily_forecast[6]
-	elif month == "Aug":
+	elif month == 8:
 		result = daily_kWh_gen / SMI_daily_forecast[7]
-	elif month == "Sep":
+	elif month == 9:
 		result = daily_kWh_gen / SMI_daily_forecast[8]
-	elif month == "Oct":
+	elif month == 10:
 		result = daily_kWh_gen / SMI_daily_forecast[9]
-	elif month == "Nov":
+	elif month == 11:
 		result = daily_kWh_gen / SMI_daily_forecast[10]
-	elif month == "Dec":
+	elif month == 12:
 		result = daily_kWh_gen / SMI_daily_forecast[11]
 	return result

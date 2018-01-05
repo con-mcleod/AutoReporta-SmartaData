@@ -60,11 +60,11 @@ cursor.execute("""CREATE TABLE forecast(
 	)""")
 
 SMIs = []
-row_count = 0
 
 # READ IN ENCOMPASS REPORT
 # Note: this is hardcoded to fit a report using 60 minute intervals
 # Todo: rewrite so that it can handle multiple report formats
+row_count = 0
 columns = defaultdict(list)
 with codecs.open(enc_dataset,'r', encoding='utf-8', errors='ignore') as enc_in:
 	reader = csv.reader(enc_in)
@@ -75,7 +75,6 @@ with codecs.open(enc_dataset,'r', encoding='utf-8', errors='ignore') as enc_in:
 
 count = 0
 for col in columns:
-
 	SMIs = re.findall(r'[a-zA-Z]{1}[0-9]{9}',columns[col][0])
 	data_type = columns[col][0].split("- ")[-1]
 	enc_dataset = columns[col][1:]
