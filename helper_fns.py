@@ -198,7 +198,6 @@ def get_SMI_monthly_data(SMI, datatype, obs_month):
 	return result
 
 def get_daily_performance(daily_kWh_gen, month, SMI_daily_forecast):
-
 	if month == 1:
 		result = daily_kWh_gen / SMI_daily_forecast[0]
 	elif month == 2:

@@ -98,12 +98,11 @@ sf_rowCount = 0
 # READ IN "MONTHLY REPORT" SALESFORCE REPORT
 # Note: this is hardcoded because the report structure does not change
 # Todo: rewrite so that it can handle multiple report formats
-with codecs.open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
-	rows = sf_in.readlines()
-	rows = rows[:-7]
+with open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 
-	for row in rows:
-		row = row.split(',')
+	for row in csv.reader(sf_in, delimiter=','):
+		if row[0] == '':
+			break
 		for i in range(0,24):
 			result = re.sub(r'\"', '', row[i])
 
