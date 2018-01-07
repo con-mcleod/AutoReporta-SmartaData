@@ -4,44 +4,6 @@ import sys, csv, os, sqlite3, re
 from constants import *
 
 #######################
-# CSV Handling
-#######################
-
-def write_to_csv(filename, flag, output_row):
-	with open(filename,flag) as csv_out:
-		writer = csv.writer(csv_out)
-		writer.writerow(output_row)
-
-def month_to_num(month):
-	if month == "Jan": 
-		return 1
-	elif month == "Feb":
-		return 2
-	elif month == "Mar":
-		return 3
-	elif month == "Apr":
-		return 4
-	elif month == "May":
-		return 5
-	elif month == "Jun":
-		return 6
-	elif month == "Jul":
-		return 7
-	elif month == "Aug":
-		return 8
-	elif month == "Sep":
-		return 9
-	elif month == "Oct":
-		return 10
-	elif month == "Nov":
-		return 11
-	elif month == "Dec":
-		return 12
-	else:
-		return 0
-
-
-#######################
 # Database Handling
 #######################
 
@@ -75,7 +37,7 @@ def dbexecute(query, payload):
 #######################
 
 def get_all_SMIs():
-	query = "SELECT distinct(SMI) from observation"
+	query = "SELECT distinct(o.smi), ref_no, ECS, installer, PVsize, panel_brand, address, state, site_status, install_date, supply_date, export_control from observation as o join SMI_details as d on o.smi=d.smi"
 	payload = None
 	all_SMIs = dbselect(query, payload)
 	return all_SMIs
@@ -97,6 +59,12 @@ def get_all_months():
 	payload = None
 	all_months = dbselect(query, payload)
 	return all_months
+
+def get_all_daymonths():
+	query = "SELECT distinct(obs_day), obs_month from observation"
+	payload = None
+	all_daymonths = dbselect(query, payload)
+	return all_daymonths
 
 def get_all_years():
 	query = "SELECT distinct(obs_year) from observation"
@@ -188,6 +156,8 @@ def get_month(SMI, datatype, obs_day):
 	result = dbselect(query, payload)
 	return result
 
+
+
 def get_SMI_weekly_data(SMI, datatype, obs_week):
 	pass
 
@@ -223,3 +193,31 @@ def get_daily_performance(daily_kWh_gen, month, SMI_daily_forecast):
 	elif month == 12:
 		result = daily_kWh_gen / SMI_daily_forecast[11]
 	return result
+
+def month_to_num(month):
+	if month == "Jan": 
+		return 1
+	elif month == "Feb":
+		return 2
+	elif month == "Mar":
+		return 3
+	elif month == "Apr":
+		return 4
+	elif month == "May":
+		return 5
+	elif month == "Jun":
+		return 6
+	elif month == "Jul":
+		return 7
+	elif month == "Aug":
+		return 8
+	elif month == "Sep":
+		return 9
+	elif month == "Oct":
+		return 10
+	elif month == "Nov":
+		return 11
+	elif month == "Dec":
+		return 12
+	else:
+		return 0

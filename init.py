@@ -23,7 +23,7 @@ cursor.execute("""CREATE TABLE observation(
 	datatype TEXT, 
 	obs_time TEXT,
 	obs_day INT,
-	obs_month TEXT,
+	obs_month INT,
 	obs_year INT,
 	value FLOAT
 	)""")
