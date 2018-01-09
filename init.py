@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys, csv, sqlite3, os, glob, re, shutil
 from collections import defaultdict
@@ -111,10 +111,10 @@ for col in columns:
 	for SMI in SMIs:
 		if (SMI and datatype == "kWh Generation"):
 			for i in range(row_count-1):
-				day = re.sub(r'-.*', '', dates[i])
+				day = re.sub(r' .*', '', dates[i])
 				month = re.sub(r'[^a-zA-Z]', '', dates[i])
 				month_num = month_to_num(month)
-				year = re.sub(r'.*-', '', dates[i])
+				year = re.sub(r'.* ', '', dates[i])
 				cursor.execute("""INSERT INTO enc_values(SMI, datatype, 
 					obs_day, obs_month, obs_year, value) VALUES (?,?,?,?,?,?)""", 
 					(SMI, datatype, day, month_num, year, enc_dataset[i]))

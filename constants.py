@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
+DATABASE = "dataset.db"
 
 JAN = 1
 FEB = 2
