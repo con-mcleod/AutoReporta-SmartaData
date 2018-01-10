@@ -3,7 +3,7 @@
 import sys, csv, os, sqlite3, re
 from openpyxl import Workbook
 from openpyxl.formatting import Rule
-from openpyxl.styles import Color, Font, PatternFill, Border
+from openpyxl.styles import Color, Font, PatternFill, Border, Alignment
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from openpyxl.utils import get_column_letter
 from helper_fns import *
@@ -43,18 +43,36 @@ wb = Workbook()
 ws = wb.active
 ws.title = "Daily Report"
 
+
+# apply conditional format to % cells to flag under/overperforming
 redFill = PatternFill(start_color='EE1111', end_color='EE1111', fill_type='solid')
 greenFill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
-ws.conditional_formatting.add('Z3:Z68',CellIsRule(operator='lessThan', formula=['.8'], stopIfTrue=True, fill=redFill))
-ws.conditional_formatting.add('Z3:Z68',CellIsRule(operator='greaterThan', formula=['1.2'], stopIfTrue=True, fill=greenFill))
+for i in range(0,69*6, 6):
+	to_format = get_column_letter(26+i)
+	to_format = str(to_format) + "3:" + str(to_format) + "68"
+	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.8'], fill=redFill))
+	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.2'], fill=greenFill))
 
+# bold the top row
 bolded_font = Font(bold=True)
 for i in range(1,439):
 	ws.cell(row=1, column=i).font = bolded_font
 	ws.cell(row=2, column=i).font = bolded_font
+
+# merging top row and centering for clearer reading
 ws.merge_cells('A1:L1')
 ws.merge_cells('M1:X1')
+for i in range(0,69*6, 6):
+	merge_lhs = get_column_letter(25+i)
+	merge_rhs = get_column_letter(25+i+5)
+	to_merge = str(merge_lhs) + "1:" + str(merge_rhs) + "1"
+	ws.merge_cells(to_merge)
 
+for cell in ws['1:1']:
+	cell.alignment = Alignment(horizontal='center')
+
+
+# populate sheet
 dates = get_all_dates()
 
 row_count = 0
@@ -136,8 +154,6 @@ for SMI in SMIs:
 				ws.cell(row=row_count+1, column=col_count+4).value = None
 				ws.cell(row=row_count+1, column=col_count+5).value = None
 				ws.cell(row=row_count+1, column=col_count+6).value = None
-
-				
 
 				col_count += 6
 
