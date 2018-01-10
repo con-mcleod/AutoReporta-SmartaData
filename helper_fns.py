@@ -190,8 +190,23 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 
 	return perf
 
+def get_ave_perf(SMI_daily_perf):
+	count = 0
+	total_perf = 0
+	for perf in SMI_daily_perf:
+		total_perf += perf
+		count += 1
 
+	ave_perf = total_perf/count
 
+	return ave_perf
+
+def get_site_off(SMI_daily_gen):
+	count = 0
+	for gen in SMI_daily_gen:
+		if gen[0] == 0 or gen[0] == "":
+			count += 1
+	return count
 
 
 

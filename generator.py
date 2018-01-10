@@ -44,14 +44,30 @@ ws = wb.active
 ws.title = "Daily Report"
 
 
+
+
+######### 
+#ws2
+ws2 = wb.create_sheet()
+ws2.title = "Summary Stats"
+
+ws2.merge_cells('A1:G1')
+ws2.merge_cells('H1:I1')
+
+for cell in ws2['1:1']:
+	cell.alignment = Alignment(horizontal='center')
+
+
+########
+
 # apply conditional format to % cells to flag under/overperforming
 redFill = PatternFill(start_color='EE1111', end_color='EE1111', fill_type='solid')
 greenFill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
 for i in range(0,69*6, 6):
 	to_format = get_column_letter(26+i)
 	to_format = str(to_format) + "3:" + str(to_format) + "68"
-	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.8'], fill=redFill))
-	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.2'], fill=greenFill))
+	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
 # bold the top row
 bolded_font = Font(bold=True)
@@ -109,6 +125,29 @@ for SMI in SMIs:
 		ws.cell(row=row_count+2, column=col_count+23).value = "Nov"
 		ws.cell(row=row_count+2, column=col_count+24).value = "Dec"
 
+
+		#######
+		# ws2 set up
+
+		ws2.cell(row=row_count+1, column=col_count+1).value = "Salesforce Details"
+		ws2.cell(row=row_count+1, column=col_count+8).value = "Summary Stats"
+
+		for i in range(1,12):
+			ws2.cell(row=1, column=i).font = bolded_font
+			ws2.cell(row=2, column=i).font = bolded_font
+
+		ws2.cell(row=row_count+2, column=col_count+1).value = "SMI"
+		ws2.cell(row=row_count+2, column=col_count+2).value = "ECS"
+		ws2.cell(row=row_count+2, column=col_count+3).value = "Address"
+		ws2.cell(row=row_count+2, column=col_count+4).value = "State"
+		ws2.cell(row=row_count+2, column=col_count+5).value = "Site Status"
+		ws2.cell(row=row_count+2, column=col_count+6).value = "PV Size"
+		ws2.cell(row=row_count+2, column=col_count+7).value = "Export Control"
+		ws2.cell(row=row_count+2, column=col_count+8).value = "Performance for Period"
+		ws2.cell(row=row_count+2, column=col_count+9).value = "Site off #days"
+
+		##########
+
 		for date in dates:
 			date = str(date)
 			date = re.sub(r'(\(|\))', '', date)
@@ -133,6 +172,33 @@ for SMI in SMIs:
 		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
 
 		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
+
+		average_perf = get_ave_perf(SMI_daily_perf)
+		site_off_count = get_site_off(SMI_daily_gen)
+		
+
+
+#########
+# populate summary stats page
+
+		for detail in SMI_details:
+
+			ws2.cell(row=row_count+1, column=col_count+1).value = detail[0]
+			ws2.cell(row=row_count+1, column=col_count+2).value = detail[2]
+			ws2.cell(row=row_count+1, column=col_count+3).value = detail[6]
+			ws2.cell(row=row_count+1, column=col_count+4).value = detail[7]
+			ws2.cell(row=row_count+1, column=col_count+5).value = detail[8]
+			ws2.cell(row=row_count+1, column=col_count+6).value = detail[4]
+			ws2.cell(row=row_count+1, column=col_count+7).value = detail[11]
+
+			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+
+
+			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
+			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
+			ws2.cell(row=row_count+1, column=col_count+9).value = site_off_count
+#########
 
 		for x in range(0, len(SMI_details)):
 			for detail in SMI_details[x]:
