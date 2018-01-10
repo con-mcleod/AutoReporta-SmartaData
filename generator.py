@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys, csv, os, sqlite3, re
+import numpy as np
 from openpyxl import Workbook
 from openpyxl.formatting import Rule
 from openpyxl.styles import Color, Font, PatternFill, Border, Alignment
@@ -144,7 +145,8 @@ for SMI in SMIs:
 		ws2.cell(row=row_count+2, column=col_count+6).value = "PV Size"
 		ws2.cell(row=row_count+2, column=col_count+7).value = "Export Control"
 		ws2.cell(row=row_count+2, column=col_count+8).value = "Performance for Period"
-		ws2.cell(row=row_count+2, column=col_count+9).value = "Site off #days"
+		ws2.cell(row=row_count+2, column=col_count+9).value = "Perf variance"
+		ws2.cell(row=row_count+2, column=col_count+10).value = "Site off #days"
 
 		##########
 
@@ -175,6 +177,8 @@ for SMI in SMIs:
 
 		average_perf = get_ave_perf(SMI_daily_perf)
 		site_off_count = get_site_off(SMI_daily_gen)
+
+		perf_variance = np.var(SMI_daily_perf)
 		
 
 
@@ -194,10 +198,14 @@ for SMI in SMIs:
 			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
+			ws2.conditional_formatting.add('I3:I68',CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
 
 			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
-			ws2.cell(row=row_count+1, column=col_count+9).value = site_off_count
+			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
+			ws2.cell(row=row_count+1, column=col_count+9).value = perf_variance
+			ws2.cell(row=row_count+1, column=col_count+10).value = site_off_count
+			
 #########
 
 		for x in range(0, len(SMI_details)):
