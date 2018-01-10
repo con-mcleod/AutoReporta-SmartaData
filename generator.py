@@ -200,6 +200,8 @@ for SMI in SMIs:
 
 			ws2.conditional_formatting.add('I3:I68',CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
 
+			ws2.conditional_formatting.add('J3:J68',CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
+
 			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
 			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'

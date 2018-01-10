@@ -85,7 +85,7 @@ def get_all_SMIs():
 # return the range of dates from encompass report
 def get_all_dates():
 	query = """SELECT obs_day, obs_month, obs_year from enc_values 
-	group by obs_day, obs_month, obs_year order by obs_year"""
+	group by obs_day, obs_month, obs_year order by obs_year, obs_month"""
 	payload = None
 	all_dates = dbselect(query, payload)
 	return all_dates
@@ -112,6 +112,8 @@ def get_SMI_forecast(SMI):
 	return result
 
 # convert monthly forecast value to daily forecast value
+# currently ignoring leap year because this program is intended for use from
+# 2017 -> eol which wouldn't be more than 3 years, and next leap year is 2020
 def monthly_to_daily(monthly_forecast):
 	results = []
 	for i in range(1, len(monthly_forecast[0])):

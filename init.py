@@ -10,13 +10,14 @@ from helper_fns import *
 #                            #
 ##############################
 
-if (len(sys.argv) != 4):
-	print ("Usage: python3 init.py [encompass_file.csv] [salesforce_file.csv] dataset.db")
+if (len(sys.argv) != 5):
+	print ("Usage: python3 init.py [encompass_file.csv] [salesforce_file.csv] [bom_file.txt] dataset.db")
 	exit(1)
 
 enc_dataset = sys.argv[1]
 sf_dataset = sys.argv[2]
-DATABASE = sys.argv[3]
+bom_dataset = sys.argv[3]
+DATABASE = sys.argv[4]
 
 ##############################
 #                            #
@@ -115,7 +116,7 @@ for col in columns:
 				month = re.sub(r'[^a-zA-Z]', '', dates[i])
 				month_num = month_to_num(month)
 				year = re.sub(r'.* ', '', dates[i])
-				cursor.execute("""INSERT INTO enc_values(SMI, datatype, 
+				cursor.execute("""INSERT OR IGNORE INTO enc_values(SMI, datatype, 
 					obs_day, obs_month, obs_year, value) VALUES (?,?,?,?,?,?)""", 
 					(SMI, datatype, day, month_num, year, enc_dataset[i]))
 
@@ -199,6 +200,31 @@ with open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 			(SMI, jan, feb, mar, apr, may, jun, jul, aug, sep, octo, nov, dec))
 
 		sf_rowCount += 1
+
+##############################
+#                            #
+# READ IN BOM DATA           #
+#                            #
+##############################
+
+with open(bom_dataset,'r') as bom_in:
+
+	adelaide_solar = bom_in
+	brisbane_solar = bom_in
+	sydney_solar = bom_in
+
+	adelaide_temp = bom_in
+	brisbane_temp = bom_in
+	sydney_temp = bom_in
+
+	adelaide_rain = bom_in
+	brisbane_rain = bom_in
+	sydney_rain = bom_in
+
+	for row in adelaide_solar:
+		row = re.sub(r'\s{2}', ',',row).rstrip()
+		print (row)
+
 
 ##############################
 #                            #

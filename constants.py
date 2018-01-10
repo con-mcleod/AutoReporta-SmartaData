@@ -24,6 +24,8 @@ FRI = 5
 SAT = 6
 SUN = 7
 
+leap_years = [2012, 2016, 2020, 2024, 2028, 2032]
+
 days_in_jan = 31
 days_in_feb = 28
 days_in_feb_leap = 29
