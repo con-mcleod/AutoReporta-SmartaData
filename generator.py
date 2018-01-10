@@ -144,11 +144,11 @@ for SMI in SMIs:
 			col_count += 1
 
 		for y in range(0, len(SMI_daily_gen)):
-			for gen, perf in zip(SMI_daily_gen[y], SMI_daily_perf):
+			for gen in SMI_daily_gen[y]:
 				ws.cell(row=row_count+1, column=col_count+1).value = gen
 
 				ws.cell(row=row_count+1, column=col_count+2).number_format = '0.00%'
-				ws.cell(row=row_count+1, column=col_count+2).value = perf
+				ws.cell(row=row_count+1, column=col_count+2).value = SMI_daily_perf[y]
 
 				ws.cell(row=row_count+1, column=col_count+3).value = None
 				ws.cell(row=row_count+1, column=col_count+4).value = None
