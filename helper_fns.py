@@ -119,8 +119,10 @@ def monthly_to_daily(monthly_forecast):
 			return 0
 		if i == JAN:
 			result = monthly_forecast[0][i]/days_in_jan
-		if i == FEB:
+		if i == FEB: # and not_leap_year
 			result = monthly_forecast[0][i]/days_in_feb
+		# if i == FEB and leap_year:
+			# result = monthly_forecast[0][i]/days_in_feb_leap
 		if i == MAR:
 			result = monthly_forecast[0][i]/days_in_mar
 		if i == APR:
@@ -144,6 +146,11 @@ def monthly_to_daily(monthly_forecast):
 		results.append(result)
 	return results
 
+def get_SMI_daily_gen(SMI):
+	query = "SELECT value from enc_values where SMI=?"
+	payload = (SMI,)
+	result = dbselect(query, payload)
+	return result
 
 
 
