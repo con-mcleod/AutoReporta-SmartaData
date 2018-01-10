@@ -146,6 +146,7 @@ def monthly_to_daily(monthly_forecast):
 		results.append(result)
 	return results
 
+# return list of encompass values for SMI's daily generation
 def get_SMI_daily_gen(SMI):
 	query = "SELECT value from enc_values where SMI=?"
 	payload = (SMI,)
@@ -153,21 +154,41 @@ def get_SMI_daily_gen(SMI):
 	return result
 
 
+def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 
+	perf = []
+	for gen, date in zip(daily_kWh_gen, dates):
 
+		if gen[0] == "":
+			perf.append(0)
+			continue
 
+		if date[1] == 1:
+			perf.append(gen[0] / SMI_daily_forecast[0])
+		elif date[1] == 2:
+			perf.append(gen[0] / SMI_daily_forecast[1])
+		elif date[1] == 3:
+			perf.append(gen[0] / SMI_daily_forecast[2])
+		elif date[1] == 4:
+			perf.append(gen[0] / SMI_daily_forecast[3])
+		elif date[1] == 5:
+			perf.append(gen[0] / SMI_daily_forecast[4])
+		elif date[1] == 6:
+			perf.append(gen[0] / SMI_daily_forecast[5])
+		elif date[1] == 7:
+			perf.append(gen[0] / SMI_daily_forecast[6])
+		elif date[1] == 8:
+			perf.append(gen[0] / SMI_daily_forecast[7])
+		elif date[1] == 9:
+			perf.append(gen[0] / SMI_daily_forecast[8])
+		elif date[1] == 10:
+			perf.append(gen[0] / SMI_daily_forecast[9])
+		elif date[1] == 11:
+			perf.append(gen[0] / SMI_daily_forecast[10])
+		elif date[1] == 12:
+			perf.append(gen[0] / SMI_daily_forecast[11])
 
-
-
-
-
-
-
-
-
-
-
-
+	return perf
 
 
 

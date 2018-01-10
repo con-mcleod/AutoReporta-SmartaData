@@ -2,7 +2,12 @@
 
 import sys, csv, os, sqlite3, re
 from openpyxl import Workbook
+from openpyxl.formatting import Rule
+from openpyxl.styles import Color, Font, PatternFill, Border
+from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
+from openpyxl.utils import get_column_letter
 from helper_fns import *
+
 
 ##############################
 #                            #
@@ -38,47 +43,106 @@ wb = Workbook()
 ws = wb.active
 ws.title = "Daily Report"
 
+redFill = PatternFill(start_color='EE1111', end_color='EE1111', fill_type='solid')
+greenFill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
+ws.conditional_formatting.add('Z3:Z68',CellIsRule(operator='lessThan', formula=['.8'], stopIfTrue=True, fill=redFill))
+ws.conditional_formatting.add('Z3:Z68',CellIsRule(operator='greaterThan', formula=['1.2'], stopIfTrue=True, fill=greenFill))
+
+bolded_font = Font(bold=True)
+for i in range(1,439):
+	ws.cell(row=1, column=i).font = bolded_font
+	ws.cell(row=2, column=i).font = bolded_font
+ws.merge_cells('A1:L1')
+ws.merge_cells('M1:X1')
+
+dates = get_all_dates()
+
 row_count = 0
 for SMI in SMIs:
 
 	col_count = 0
 
-	SMI_details = get_SMI_details(SMI[0])
-	SMI_monthly_forecast = get_SMI_forecast(SMI[0])
-	SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
-	SMI_state = get_SMI_state(SMI[0])[0][0]
+	if (row_count == 0):
+		ws.cell(row=row_count+1, column=col_count+1).value = "Salesforce Details"
+		ws.cell(row=row_count+1, column=col_count+13).value = "Daily Forecast"
 
-	SMI_daily_gen = get_SMI_daily_gen(SMI[0])
+		ws.cell(row=row_count+2, column=col_count+1).value = "SMI"
+		ws.cell(row=row_count+2, column=col_count+2).value = "Ref No"
+		ws.cell(row=row_count+2, column=col_count+3).value = "ECS"
+		ws.cell(row=row_count+2, column=col_count+4).value = "Installer"
+		ws.cell(row=row_count+2, column=col_count+5).value = "PVsize"
+		ws.cell(row=row_count+2, column=col_count+6).value = "Panel Brand"
+		ws.cell(row=row_count+2, column=col_count+7).value = "Address"
+		ws.cell(row=row_count+2, column=col_count+8).value = "State"
+		ws.cell(row=row_count+2, column=col_count+9).value = "Site Status"
+		ws.cell(row=row_count+2, column=col_count+10).value = "Install Date"
+		ws.cell(row=row_count+2, column=col_count+11).value = "Supply Date"
+		ws.cell(row=row_count+2, column=col_count+12).value = "Export Control"
+		ws.cell(row=row_count+2, column=col_count+13).value = "Jan"
+		ws.cell(row=row_count+2, column=col_count+14).value = "Feb"
+		ws.cell(row=row_count+2, column=col_count+15).value = "Mar"
+		ws.cell(row=row_count+2, column=col_count+16).value = "Apr"
+		ws.cell(row=row_count+2, column=col_count+17).value = "May"
+		ws.cell(row=row_count+2, column=col_count+18).value = "Jun"
+		ws.cell(row=row_count+2, column=col_count+19).value = "Jul"
+		ws.cell(row=row_count+2, column=col_count+20).value = "Aug"
+		ws.cell(row=row_count+2, column=col_count+21).value = "Sep"
+		ws.cell(row=row_count+2, column=col_count+22).value = "Oct"
+		ws.cell(row=row_count+2, column=col_count+23).value = "Nov"
+		ws.cell(row=row_count+2, column=col_count+24).value = "Dec"
 
-	for x in range(0, len(SMI_details)):
-		for detail in SMI_details[x]:
-			ws.cell(row=row_count+1, column=col_count+1).value = detail
+		for date in dates:
+			date = str(date)
+			date = re.sub(r'(\(|\))', '', date)
+			ws.cell(row=row_count+1, column=col_count+25).value = date
+			ws.cell(row=row_count+2, column=col_count+25).value = "Actual Gen"
+			ws.cell(row=row_count+2, column=col_count+26).value = "Curr Perf"
+			ws.cell(row=row_count+2, column=col_count+27).value = "Solar Perf"
+			ws.cell(row=row_count+2, column=col_count+28).value = "Temp Perf"
+			ws.cell(row=row_count+2, column=col_count+29).value = "Rain Perf"
+			ws.cell(row=row_count+2, column=col_count+30).value = "Adjusted Perf"
+			col_count += 6
+
+		row_count += 1
+
+	else:
+
+		SMI_details = get_SMI_details(SMI[0])
+		SMI_monthly_forecast = get_SMI_forecast(SMI[0])
+		SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
+		SMI_state = get_SMI_state(SMI[0])[0][0]
+
+		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
+
+		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
+
+		for x in range(0, len(SMI_details)):
+			for detail in SMI_details[x]:
+				ws.cell(row=row_count+1, column=col_count+1).value = detail
+				col_count += 1
+
+		for df in SMI_daily_forecast:
+			ws.cell(row=row_count+1, column=col_count+1).value = df
 			col_count += 1
 
-	for df in SMI_daily_forecast:
-		ws.cell(row=row_count+1, column=col_count+1).value = df
-		col_count += 1
+		for y in range(0, len(SMI_daily_gen)):
+			for gen, perf in zip(SMI_daily_gen[y], SMI_daily_perf):
+				ws.cell(row=row_count+1, column=col_count+1).value = gen
 
-	for y in range(0, len(SMI_daily_gen)):
-		for value in SMI_daily_gen[y]:
-			ws.cell(row=row_count+1, column=col_count+1).value = value
-			ws.cell(row=row_count+1, column=col_count+2).value = "Measured performance"
-			ws.cell(row=row_count+1, column=col_count+3).value = "Solar adjusted"
-			ws.cell(row=row_count+1, column=col_count+4).value = "Temp adjusted"
-			ws.cell(row=row_count+1, column=col_count+5).value = "Rain adjusted"
-			ws.cell(row=row_count+1, column=col_count+6).value = "Actual performance"
-			col_count += 6
+				ws.cell(row=row_count+1, column=col_count+2).number_format = '0.00%'
+				ws.cell(row=row_count+1, column=col_count+2).value = perf
+
+				ws.cell(row=row_count+1, column=col_count+3).value = None
+				ws.cell(row=row_count+1, column=col_count+4).value = None
+				ws.cell(row=row_count+1, column=col_count+5).value = None
+				ws.cell(row=row_count+1, column=col_count+6).value = None
+
+				
+
+				col_count += 6
+
 
 	row_count += 1
 
 # Save the file
 wb.save(output_file)
-
-
-
-
-	# for each date in encompass report
-		# fetch the daily generation
-		# store daily generation/forecast
-
-		# fetch BOM data for date matching SMI_state to appropriate city
