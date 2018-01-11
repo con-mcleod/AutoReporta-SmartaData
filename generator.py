@@ -179,6 +179,8 @@ for SMI in SMIs:
 		site_off_count = get_site_off(SMI_daily_gen)
 
 		perf_variance = np.var(SMI_daily_perf)
+
+		print(SMI_details)
 		
 
 

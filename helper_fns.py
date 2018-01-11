@@ -214,6 +214,7 @@ def get_site_off(SMI_daily_gen):
 
 
 
+
 ##############################
 #                            #
 # unused                     #

@@ -10,14 +10,13 @@ from helper_fns import *
 #                            #
 ##############################
 
-if (len(sys.argv) != 5):
-	print ("Usage: python3 init.py [encompass_file.csv] [salesforce_file.csv] [bom_file.txt] dataset.db")
+if (len(sys.argv) != 4):
+	print ("Usage: python3 init.py [encompass_file.csv] [salesforce_file.csv] dataset.db")
 	exit(1)
 
 enc_dataset = sys.argv[1]
 sf_dataset = sys.argv[2]
-bom_dataset = sys.argv[3]
-DATABASE = sys.argv[4]
+DATABASE = sys.argv[3]
 
 ##############################
 #                            #
@@ -72,21 +71,22 @@ cursor.execute("""CREATE TABLE forecast(
 	)""")
 
 cursor.execute("""CREATE table BOM_ave(
-	bom_location varchar(50) primary key,
+	bom_location varchar(50),
 	bom_month int,
-	curr_mean float,
-	rolling_mean float
+	bom_year int,
+	datatype varchar(20),
+	average_val float
 	)""")
 
 cursor.execute("""CREATE table BOM_obs(
-	bom_location varchar(50) primary key,
+	bom_location varchar(50),
 	bom_day int,
 	bom_month int,
 	bom_year int, 
-	solar_value float,
-	rain_value float,
-	temperature float
+	datatype varchar(10),
+	obs_value float
 	)""")
+
 
 ##############################
 #                            #
@@ -207,24 +207,33 @@ with open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 #                            #
 ##############################
 
-with open(bom_dataset,'r') as bom_in:
+bom_folder = os.path.join("bom_data","*")
 
-	adelaide_solar = bom_in
-	brisbane_solar = bom_in
-	sydney_solar = bom_in
+for file in glob.glob(bom_folder):
+	
+	bom_location = re.sub(r'[0-9]+.*$','',file)
+	bom_location = re.sub(r'^.*/','',bom_location)
+	bom_datatype = re.sub(r'^.*[0-9]+','',file)
+	bom_datatype = re.sub(r'\..*$','',bom_datatype)
 
-	adelaide_temp = bom_in
-	brisbane_temp = bom_in
-	sydney_temp = bom_in
-
-	adelaide_rain = bom_in
-	brisbane_rain = bom_in
-	sydney_rain = bom_in
-
-	for row in adelaide_solar:
-		row = re.sub(r'\s{2}', ',',row).rstrip()
-		print (row)
-
+	day = 0
+	with open(file) as f:
+		for row in f:
+			row = re.sub(r'\s{2}', ',',row).rstrip()
+			if (day == 0):
+				year = re.sub(r'[^0-9]','',row)
+			else:
+				values = row.split(",")
+				if (day <= 31):
+					for i in range(1,13):
+						cursor.execute("""INSERT OR IGNORE INTO bom_obs(bom_location, bom_day, bom_month, bom_year, datatype, obs_value)
+							values (?,?,?,?,?,?)""", (bom_location, day, i, year, bom_datatype, values[i]))
+			day += 1
+			if (row[0:4] == 'Mean'):
+				values = row.split(",")
+				for i in range(1,13):
+					cursor.execute("""INSERT OR IGNORE INTO bom_ave(bom_location, bom_month, bom_year, datatype, average_val)
+							values (?,?,?,?,?)""", (bom_location, i, year, bom_datatype, values[i]))
 
 ##############################
 #                            #

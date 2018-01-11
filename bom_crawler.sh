@@ -78,77 +78,77 @@ sydney18rain=`wget -q -O- "$sydney18_rain" | egrep "<tr><th scope=" | sed -e 's/
 melbourne18rain=`wget -q -O- "$melbourne18_rain" | egrep "<tr><th scope=" | sed -e 's/<[^>]*>/ /g' | sed -e 's/^[ \t]*//g'`
 townsville18rain=`wget -q -O- "$townsville18_rain" | egrep "<tr><th scope=" | sed -e 's/<[^>]*>/ /g' | sed -e 's/^[ \t]*//g'`
 
-echo "Adelaide17solar" > bom_data/adelaide_solar.txt
-echo "$adelaide17solar" >> bom_data/adelaide_solar.txt
-echo "Adelaide18solar" >> bom_data/adelaide_solar.txt
-echo "$adelaide18solar" >> bom_data/adelaide_solar.txt
+echo "Adelaide17solar" > bom_data/adelaide17solar.txt
+echo "$adelaide17solar" >> bom_data/adelaide17solar.txt
+echo "Adelaide18solar" > bom_data/adelaide18solar.txt
+echo "$adelaide18solar" >> bom_data/adelaide18solar.txt
 
-echo "Brisbane17solar" > bom_data/brisbane_solar.txt
-echo "$brisbane17solar" >> bom_data/brisbane_solar.txt
-echo "Brisbane18solar" >> bom_data/brisbane_solar.txt
-echo "$brisbane18solar" >> bom_data/brisbane_solar.txt
+echo "Brisbane17solar" > bom_data/brisbane17solar.txt
+echo "$brisbane17solar" >> bom_data/brisbane17solar.txt
+echo "Brisbane18solar" > bom_data/brisbane18solar.txt
+echo "$brisbane18solar" >> bom_data/brisbane18solar.txt
 
-echo "Sydney17solar" > bom_data/sydney_solar.txt
-echo "$sydney17solar" >> bom_data/sydney_solar.txt
-echo "Sydney18solar" >> bom_data/sydney_solar.txt
-echo "$sydney18solar" >> bom_data/sydney_solar.txt
+echo "Sydney17solar" > bom_data/sydney17solar.txt
+echo "$sydney17solar" >> bom_data/sydney17solar.txt
+echo "Sydney18solar" > bom_data/sydney18solar.txt
+echo "$sydney18solar" >> bom_data/sydney18solar.txt
 
-echo "Melbourne17solar" > bom_data/melbourne_solar.txt
-echo "$melbourne17solar" >> bom_data/melbourne_solar.txt
-echo "Melbourne18solar" >> bom_data/melbourne_solar.txt
-echo "$melbourne18solar" >> bom_data/melbourne_solar.txt
+echo "Melbourne17solar" > bom_data/melbourne17solar.txt
+echo "$melbourne17solar" >> bom_data/melbourne17solar.txt
+echo "Melbourne18solar" > bom_data/melbourne18solar.txt
+echo "$melbourne18solar" >> bom_data/melbourne18solar.txt
 
-echo "Townsville17solar" > bom_data/townsville_solar.txt
-echo "$townsville17solar" >> bom_data/townsville_solar.txt
-echo "Townsville18solar" >> bom_data/townsville_solar.txt
-echo "$townsville18solar" >> bom_data/townsville_solar.txt
+echo "Townsville17solar" > bom_data/townsville17solar.txt
+echo "$townsville17solar" >> bom_data/townsville17solar.txt
+echo "Townsville18solar" > bom_data/townsville18solar.txt
+echo "$townsville18solar" >> bom_data/townsville18solar.txt
 
-echo "Adelaide17temp" > bom_data/adelaide_temp.txt
-echo "$adelaide17temp" >> bom_data/adelaide_temp.txt
-echo "Adelaide18temp" >> bom_data/adelaide_temp.txt
-echo "$adelaide18temp" >> bom_data/adelaide_temp.txt
+echo "Adelaide17temp" > bom_data/adelaide17temp.txt
+echo "$adelaide17temp" >> bom_data/adelaide17temp.txt
+echo "Adelaide18temp" > bom_data/adelaide18temp.txt
+echo "$adelaide18temp" >> bom_data/adelaide18temp.txt
 
-echo "Brisbane17temp" > bom_data/brisbane_temp.txt
-echo "$brisbane17temp" >> bom_data/brisbane_temp.txt
-echo "Brisbane18temp" >> bom_data/brisbane_temp.txt
-echo "$brisbane18temp" >> bom_data/brisbane_temp.txt
+echo "Brisbane17temp" > bom_data/brisbane17temp.txt
+echo "$brisbane17temp" >> bom_data/brisbane17temp.txt
+echo "Brisbane18temp" > bom_data/brisbane18temp.txt
+echo "$brisbane18temp" >> bom_data/brisbane18temp.txt
 
-echo "Sydney17temp" > bom_data/sydney_temp.txt
-echo "$sydney17temp" >> bom_data/sydney_temp.txt
-echo "Sydney18temp" >> bom_data/sydney_temp.txt
-echo "$sydney18temp" >> bom_data/sydney_temp.txt
+echo "Sydney17temp" > bom_data/sydney17temp.txt
+echo "$sydney17temp" >> bom_data/sydney17temp.txt
+echo "Sydney18temp" > bom_data/sydney18temp.txt
+echo "$sydney18temp" >> bom_data/sydney18temp.txt
 
-echo "Melbourne17temp" > bom_data/melbourne_temp.txt
-echo "$melbourne17temp" >> bom_data/melbourne_temp.txt
-echo "Melbourne18temp" >> bom_data/melbourne_temp.txt
-echo "$melbourne18temp" >> bom_data/melbourne_temp.txt
+echo "Melbourne17temp" > bom_data/melbourne17temp.txt
+echo "$melbourne17temp" >> bom_data/melbourne17temp.txt
+echo "Melbourne18temp" > bom_data/melbourne18temp.txt
+echo "$melbourne18temp" >> bom_data/melbourne18temp.txt
 
-echo "Townsville17temp" > bom_data/townsville_temp.txt
-echo "$townsville17temp" >> bom_data/townsville_temp.txt
-echo "Townsville18temp" >> bom_data/townsville_temp.txt
-echo "$townsville18temp" >> bom_data/townsville_temp.txt
+echo "Townsville17temp" > bom_data/townsville17temp.txt
+echo "$townsville17temp" >> bom_data/townsville17temp.txt
+echo "Townsville18temp" > bom_data/townsville18temp.txt
+echo "$townsville18temp" >> bom_data/townsville18temp.txt
 
-echo "Adelaide17rain" > bom_data/adelaide_rain.txt
-echo "$adelaide17rain" >> bom_data/adelaide_rain.txt
-echo "Adelaide18rain" >> bom_data/adelaide_rain.txt
-echo "$adelaide18rain" >> bom_data/adelaide_rain.txt
+echo "Adelaide17rain" > bom_data/adelaide17rain.txt
+echo "$adelaide17rain" >> bom_data/adelaide17rain.txt
+echo "Adelaide18rain" > bom_data/adelaide18rain.txt
+echo "$adelaide18rain" >> bom_data/adelaide18rain.txt
 
-echo "Brisbane17rain" > bom_data/brisbane_rain.txt
-echo "$brisbane17rain" >> bom_data/brisbane_rain.txt
-echo "Brisbane18rain" >> bom_data/brisbane_rain.txt
-echo "$brisbane18rain" >> bom_data/brisbane_rain.txt
+echo "Brisbane17rain" > bom_data/brisbane17rain.txt
+echo "$brisbane17rain" >> bom_data/brisbane17rain.txt
+echo "Brisbane18rain" > bom_data/brisbane18rain.txt
+echo "$brisbane18rain" >> bom_data/brisbane18rain.txt
 
-echo "Sydney17rain" > bom_data/sydney_rain.txt
-echo "$sydney17rain" >> bom_data/sydney_rain.txt
-echo "Sydney18rain" >> bom_data/sydney_rain.txt
-echo "$sydney18rain" >> bom_data/sydney_rain.txt
+echo "Sydney17rain" > bom_data/sydney17rain.txt
+echo "$sydney17rain" >> bom_data/sydney17rain.txt
+echo "Sydney18rain" > bom_data/sydney18rain.txt
+echo "$sydney18rain" >> bom_data/sydney18rain.txt
 
-echo "Melbourne17rain" > bom_data/melbourne_rain.txt
-echo "$melbourne17rain" >> bom_data/melbourne_rain.txt
-echo "Melbourne18rain" >> bom_data/melbourne_rain.txt
-echo "$melbourne18rain" >> bom_data/melbourne_rain.txt
+echo "Melbourne17rain" > bom_data/melbourne17rain.txt
+echo "$melbourne17rain" >> bom_data/melbourne17rain.txt
+echo "Melbourne18rain" > bom_data/melbourne18rain.txt
+echo "$melbourne18rain" >> bom_data/melbourne18rain.txt
 
-echo "Townsville17rain" > bom_data/townsville_rain.txt
-echo "$townsville17rain" >> bom_data/townsville_rain.txt
-echo "Townsville18rain" >> bom_data/townsville_rain.txt
-echo "$townsville18rain" >> bom_data/townsville_rain.txt
+echo "Townsville17rain" > bom_data/townsville17rain.txt
+echo "$townsville17rain" >> bom_data/townsville17rain.txt
+echo "Townsville18rain" > bom_data/townsville18rain.txt
+echo "$townsville18rain" >> bom_data/townsville18rain.txt
