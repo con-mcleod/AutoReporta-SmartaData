@@ -222,6 +222,7 @@ for file in glob.glob(bom_folder):
 			row = re.sub(r'\s{2}', ',',row).rstrip()
 			if (day == 0):
 				year = re.sub(r'[^0-9]','',row)
+				year = "20"+year
 			else:
 				values = row.split(",")
 				if (day <= 31):

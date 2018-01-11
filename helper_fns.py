@@ -155,7 +155,50 @@ def get_SMI_daily_gen(SMI):
 	result = dbselect(query, payload)
 	return result
 
+# return list of solar performance for a given state
+def get_state_solar_perf(state, datatype):
+	
+	city = state_to_city(state)
 
+	query = "SELECT obs_value, bom_day, bom_month, bom_year from bom_obs where bom_location=? and datatype=? order by bom_year, bom_month"
+	payload = (city, datatype)
+	result = dbselect(query, payload)
+	return result
+
+# return list of only relevant solar values
+def filter_weather(weather_cond, dates):
+
+	relevant = []
+	if weather_cond:
+		for cond in weather_cond:
+			for date in dates:
+				if (cond[3]==date[2]) and (cond[2]==date[1]) and (cond[1]==date[0]):
+					relevant.append(cond)
+	return relevant
+
+# return only the value from the list
+def get_weather_vals(relevant_weather_perf):
+	values = []
+	for i in range(0, len(relevant_weather_perf)):
+		values.append(relevant_weather_perf[i][0])
+
+	if not values:
+		for i in range(0, 69):
+			values.append(0)
+	return values
+
+def get_ave_solar(state, datatype):
+
+	city = state_to_city(state)
+
+	query = "SELECT average_val from bom_ave where bom_location=? and datatype=?"
+	payload = (city, datatype)
+	result = dbselect(query, payload)
+	print (result)
+	return result
+
+
+# return list of performance as actual generation / forecast for each day
 def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 
 	perf = []
@@ -192,6 +235,7 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 
 	return perf
 
+# return total performance as average of daily performance
 def get_ave_perf(SMI_daily_perf):
 	count = 0
 	total_perf = 0
@@ -203,6 +247,7 @@ def get_ave_perf(SMI_daily_perf):
 
 	return ave_perf
 
+# return count of number of days with 0 generation
 def get_site_off(SMI_daily_gen):
 	count = 0
 	for gen in SMI_daily_gen:
@@ -210,34 +255,17 @@ def get_site_off(SMI_daily_gen):
 			count += 1
 	return count
 
+def state_to_city(state):
+	if state == "QLD":
+		city = "brisbane"
+	elif state == "NSW":
+		city = "sydney"
+	elif state == "SA":
+		city = "adelaide"
+	elif state == "VIC":
+		city = "melbourne"
+	else:
+		city = None
+	return city
 
 
-
-
-
-##############################
-#                            #
-# unused                     #
-#                            #
-##############################
-
-# return all days from encompass report
-def get_all_days():
-	query = "SELECT distinct(obs_day) from enc_values"
-	payload = None
-	all_days = dbselect(query, payload)
-	return all_days
-
-# return all months from encompass report
-def get_all_months():
-	query = "SELECT distinct(obs_month) from enc_values"
-	payload = None
-	all_months = dbselect(query, payload)
-	return all_months
-
-# return all years from encompass report
-def get_all_years():
-	query = "SELECT distinct(obs_year) from enc_values"
-	payload = None
-	all_years = dbselect(query, payload)
-	return all_years

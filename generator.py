@@ -156,9 +156,9 @@ for SMI in SMIs:
 			ws.cell(row=row_count+1, column=col_count+25).value = date
 			ws.cell(row=row_count+2, column=col_count+25).value = "Actual Gen"
 			ws.cell(row=row_count+2, column=col_count+26).value = "Curr Perf"
-			ws.cell(row=row_count+2, column=col_count+27).value = "Solar Perf"
-			ws.cell(row=row_count+2, column=col_count+28).value = "Temp Perf"
-			ws.cell(row=row_count+2, column=col_count+29).value = "Rain Perf"
+			ws.cell(row=row_count+2, column=col_count+27).value = "Solar rad"
+			ws.cell(row=row_count+2, column=col_count+28).value = "Temp max"
+			ws.cell(row=row_count+2, column=col_count+29).value = "Rain mm"
 			ws.cell(row=row_count+2, column=col_count+30).value = "Adjusted Perf"
 			col_count += 6
 
@@ -172,16 +172,25 @@ for SMI in SMIs:
 		SMI_state = get_SMI_state(SMI[0])[0][0]
 
 		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
-
 		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
-
 		average_perf = get_ave_perf(SMI_daily_perf)
 		site_off_count = get_site_off(SMI_daily_gen)
-
 		perf_variance = np.var(SMI_daily_perf)
 
-		print(SMI_details)
-		
+
+		state_solar_perf = get_state_solar_perf(SMI_state, "solar")
+		state_temp_perf = get_state_solar_perf(SMI_state, "temp")
+		state_rain_perf = get_state_solar_perf(SMI_state, "rain")
+		relevant_solar_perf = filter_weather(state_solar_perf, dates)
+		relevant_temp_perf = filter_weather(state_temp_perf, dates)
+		relevant_rain_perf = filter_weather(state_rain_perf, dates)
+
+		solar_vals = get_weather_vals(relevant_solar_perf)
+		temp_vals = get_weather_vals(relevant_temp_perf)
+		rain_vals = get_weather_vals(relevant_rain_perf)
+
+		average_solar = get_ave_solar(SMI_state, "solar")
+
 
 
 #########
@@ -227,10 +236,10 @@ for SMI in SMIs:
 
 				ws.cell(row=row_count+1, column=col_count+2).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+2).value = SMI_daily_perf[y]
-
-				ws.cell(row=row_count+1, column=col_count+3).value = None
-				ws.cell(row=row_count+1, column=col_count+4).value = None
-				ws.cell(row=row_count+1, column=col_count+5).value = None
+				
+				ws.cell(row=row_count+1, column=col_count+3).value = solar_vals[y]
+				ws.cell(row=row_count+1, column=col_count+4).value = temp_vals[y]
+				ws.cell(row=row_count+1, column=col_count+5).value = rain_vals[y]
 				ws.cell(row=row_count+1, column=col_count+6).value = None
 
 				col_count += 6
