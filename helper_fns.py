@@ -176,18 +176,18 @@ def filter_weather(weather_cond, dates):
 	return relevant
 
 # return only the value from the list
-def get_weather_vals(relevant_weather_perf):
+def get_weather_vals(relevant_weather_perf, loop_val):
 	values = []
 	for i in range(0, len(relevant_weather_perf)):
 		values.append(relevant_weather_perf[i][0])
 
 	if not values:
-		for i in range(0, 69):
+		for i in range(0, loop_val):
 			values.append(0)
 	return values
 
 # return list of all average solar values in each month and year
-def get_ave_solar(state, datatype):
+def get_ave_condition(state, datatype):
 	city = state_to_city(state)
 	query = "SELECT average_val, bom_month, bom_year, bom_location from bom_ave where bom_location=? and datatype=?"
 	payload = (city, datatype)
@@ -204,11 +204,11 @@ def filter_ave(average_list, dates):
 	return relevant
 
 # return list of weather condition vs average
-def compare_cond_to_ave(solar_vals, dates, state, relevant_ave_solar):
+def compare_cond_to_ave(cond_vals, dates, state, relevant_ave):
 	city = state_to_city(state)
 	results = []
-	for val, date in zip(solar_vals, dates):
-		for ave in relevant_ave_solar:
+	for val, date in zip(cond_vals, dates):
+		for ave in relevant_ave:
 			if city==ave[3] and date[2]==ave[2] and date[1]==ave[1]:
 				if (val is not ""):
 					weather_var = val/ave[0]
@@ -217,7 +217,7 @@ def compare_cond_to_ave(solar_vals, dates, state, relevant_ave_solar):
 				results.append(weather_var)
 
 	if not results:
-		for i in range(0, 69):
+		for i in range(0, len(dates)):
 			results.append(0)
 
 	return results
@@ -292,5 +292,23 @@ def state_to_city(state):
 	else:
 		city = None
 	return city
+
+
+# convert performance to an adjusted performance value
+def adjust_perf(SMI_daily_perf, solar_cond_vs_ave, slope, intercept, p_value, r_value):
+	
+	adjusted_result = []
+	if (p_value < .05 and r_value*r_value>.5):
+		for perf, weather in zip(SMI_daily_perf, solar_cond_vs_ave):
+			
+			weather_diff = -(weather - 1)
+			adjusted_perf = perf + slope*weather_diff
+			adjusted_result.append(adjusted_perf)
+
+	if not adjusted_result:
+		for i in range(0, len(SMI_daily_perf)):
+			adjusted_result.append("")
+	return adjusted_result
+
 
 

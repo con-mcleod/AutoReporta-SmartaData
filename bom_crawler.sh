@@ -5,6 +5,18 @@
 # to get a working link, use the above url and search for the weather stations and copy in below
 # sorry BOM
 
+
+# to do: 
+# write a less shit script
+# add more cities:
+# NSW: Wagga Wagga, Newcastle, Wollongong, Canberra, Port Macquarie, Coffs Harbour, Ballina, Tamworth
+# WA: Perth
+# NT: Darwin
+# Victoria: Geelong, Bendigo, Albury
+# SA: Port Augusta, Burra
+# QLD: Cairns, Toowoomba, Gold Coast, Mackay, Rockhampton, Bundaberg, Gympie
+
+
 adelaide17_solar="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_nccObsCode=193&p_display_type=dailyDataFile&p_startYear=2017&p_c=-106909102&p_stn_num=023119"
 melbourne17_solar="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_nccObsCode=193&p_display_type=dailyDataFile&p_startYear=2017&p_c=-1487203034&p_stn_num=086232"
 sydney17_solar="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_nccObsCode=193&p_display_type=dailyDataFile&p_startYear=2017&p_c=-871369877&p_stn_num=066006"
