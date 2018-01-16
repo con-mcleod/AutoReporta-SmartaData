@@ -2,6 +2,8 @@
 
 import sys, csv, os, sqlite3, re
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
 from openpyxl import Workbook
 from openpyxl.formatting import Rule
 from openpyxl.styles import Color, Font, PatternFill, Border, Alignment
@@ -147,6 +149,7 @@ for SMI in SMIs:
 		ws2.cell(row=row_count+2, column=col_count+8).value = "Performance for Period"
 		ws2.cell(row=row_count+2, column=col_count+9).value = "Perf variance"
 		ws2.cell(row=row_count+2, column=col_count+10).value = "Site off #days"
+		ws2.cell(row=row_count+2, column=col_count+11).value = "Perf & Solar-rad Correlation"
 
 		##########
 
@@ -190,8 +193,18 @@ for SMI in SMIs:
 		rain_vals = get_weather_vals(relevant_rain_perf)
 
 		average_solar = get_ave_solar(SMI_state, "solar")
+		relevant_ave_solar = filter_ave(average_solar, dates)
+		solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_state, relevant_ave_solar)
 
+		correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
 
+		x = np.array(SMI_daily_perf)
+		y = np.array(solar_cond_vs_ave)
+		slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+
+		plt.plot(x, y, 'o')
+		plt.plot(x, intercept + slope*x, 'r')
+		plt.show()
 
 #########
 # populate summary stats page
@@ -218,6 +231,9 @@ for SMI in SMIs:
 			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+9).value = perf_variance
 			ws2.cell(row=row_count+1, column=col_count+10).value = site_off_count
+			ws2.cell(row=row_count+1, column=col_count+11).number_format = '0.00%'
+			ws2.conditional_formatting.add('K3:K68',ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
+			ws2.cell(row=row_count+1, column=col_count+11).value = correlation[0][1]
 			
 #########
 
@@ -237,7 +253,8 @@ for SMI in SMIs:
 				ws.cell(row=row_count+1, column=col_count+2).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+2).value = SMI_daily_perf[y]
 				
-				ws.cell(row=row_count+1, column=col_count+3).value = solar_vals[y]
+				ws.cell(row=row_count+1, column=col_count+3).number_format = '0.00%'
+				ws.cell(row=row_count+1, column=col_count+3).value = solar_cond_vs_ave[y]
 				ws.cell(row=row_count+1, column=col_count+4).value = temp_vals[y]
 				ws.cell(row=row_count+1, column=col_count+5).value = rain_vals[y]
 				ws.cell(row=row_count+1, column=col_count+6).value = None

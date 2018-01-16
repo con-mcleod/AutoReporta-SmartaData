@@ -167,7 +167,6 @@ def get_state_solar_perf(state, datatype):
 
 # return list of only relevant solar values
 def filter_weather(weather_cond, dates):
-
 	relevant = []
 	if weather_cond:
 		for cond in weather_cond:
@@ -187,16 +186,41 @@ def get_weather_vals(relevant_weather_perf):
 			values.append(0)
 	return values
 
+# return list of all average solar values in each month and year
 def get_ave_solar(state, datatype):
-
 	city = state_to_city(state)
-
-	query = "SELECT average_val from bom_ave where bom_location=? and datatype=?"
+	query = "SELECT average_val, bom_month, bom_year, bom_location from bom_ave where bom_location=? and datatype=?"
 	payload = (city, datatype)
 	result = dbselect(query, payload)
-	print (result)
 	return result
 
+# return list of only relevant average values
+def filter_ave(average_list, dates):
+	relevant = []
+	for average in average_list:
+		for date in dates:
+			if (average[1]==date[1] and average[2]==date[2] and average not in relevant):
+				relevant.append(average)
+	return relevant
+
+# return list of weather condition vs average
+def compare_cond_to_ave(solar_vals, dates, state, relevant_ave_solar):
+	city = state_to_city(state)
+	results = []
+	for val, date in zip(solar_vals, dates):
+		for ave in relevant_ave_solar:
+			if city==ave[3] and date[2]==ave[2] and date[1]==ave[1]:
+				if (val is not ""):
+					weather_var = val/ave[0]
+				else:
+					weather_var = 0
+				results.append(weather_var)
+
+	if not results:
+		for i in range(0, 69):
+			results.append(0)
+
+	return results
 
 # return list of performance as actual generation / forecast for each day
 def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
@@ -255,6 +279,7 @@ def get_site_off(SMI_daily_gen):
 			count += 1
 	return count
 
+# convert state to city
 def state_to_city(state):
 	if state == "QLD":
 		city = "brisbane"
