@@ -186,6 +186,17 @@ def get_weather_vals(relevant_weather_perf, loop_val):
 			values.append(0)
 	return values
 
+# function to translate max temp to a power loss number
+def get_temp_effect(temp_values):
+	results = []
+	for temp in temp_values:
+		if temp is not None and temp != "":
+			temp_effect = -(.004 * (temp*.85 - 25))
+		else:
+			temp_effect = 0
+		results.append(temp_effect)
+	return results
+
 # return list of all average solar values in each month and year
 def get_ave_condition(state, datatype):
 	city = state_to_city(state)

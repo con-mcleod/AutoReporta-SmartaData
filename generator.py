@@ -71,13 +71,17 @@ for cell in ws['1:1']:
 	cell.alignment = Alignment(horizontal='center')
 
 # apply conditional format to flag under/overperforming performance
-redFill = PatternFill(start_color='EE1111', end_color='EE1111', fill_type='solid')
-greenFill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
+redFill = PatternFill(start_color='FA5858', end_color='FA5858', fill_type='solid')
+greenFill = PatternFill(start_color='9Afe2e', end_color='9Afe2e', fill_type='solid')
 for i in range(0,len(dates)*5, 5):
-	to_format = get_column_letter(26+i)
-	to_format = str(to_format) + "3:" + str(to_format) + str(num_rows-1)
-	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
-	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	actual_perf = get_column_letter(26+i)
+	new_perf = get_column_letter(26+i+3)
+	actual_perf = str(actual_perf) + "3:" + str(actual_perf) + str(num_rows-1)
+	new_perf = str(new_perf) + "3:" + str(new_perf) + str(num_rows-1)
+	ws.conditional_formatting.add(actual_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws.conditional_formatting.add(actual_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	ws.conditional_formatting.add(new_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws.conditional_formatting.add(new_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
 # apply conditional formatting to summary stats sheet
 for i in range(1, 20):
@@ -154,7 +158,8 @@ for SMI in SMIs:
 		ws2.cell(row=row_count+2, column=col_count+5).value = "Site Status"
 		ws2.cell(row=row_count+2, column=col_count+6).value = "PV Size"
 		ws2.cell(row=row_count+2, column=col_count+7).value = "Export Control"
-		ws2.cell(row=row_count+2, column=col_count+8).value = "Performance for Period"
+		ws2.cell(row=row_count+2, column=col_count+8).value = "Enc Perf"
+		ws2.cell(row=row_count+2, column=col_count+9).value = "Ave Adj Perf"
 		ws2.cell(row=row_count+2, column=col_count+10).value = "Perf variance"
 		ws2.cell(row=row_count+2, column=col_count+11).value = "Site off #days"
 		ws2.cell(row=row_count+2, column=col_count+12).value = "Perf & Solar-rad Correlation"
@@ -199,6 +204,8 @@ for SMI in SMIs:
 		relevant_ave_solar = filter_ave(average_solar, dates)
 		solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_state, relevant_ave_solar)
 		solar_correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
+
+		temp_effect = get_temp_effect(temp_vals)
 
 		perf_x = np.array(SMI_daily_perf)
 		solar_y = np.array(solar_cond_vs_ave)
@@ -255,7 +262,8 @@ for SMI in SMIs:
 				
 				ws.cell(row=row_count+1, column=col_count+3).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+3).value = solar_cond_vs_ave[y]
-				ws.cell(row=row_count+1, column=col_count+4).value = temp_vals[y]
+				ws.cell(row=row_count+1, column=col_count+4).number_format = '0.00%'
+				ws.cell(row=row_count+1, column=col_count+4).value = temp_effect[y]
 				ws.cell(row=row_count+1, column=col_count+5).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+5).value = sol_adjusted_perf[y]
 
