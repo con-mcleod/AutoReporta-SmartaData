@@ -1,0 +1,37 @@
+Melbourne18solar
+1st  31.4                        
+2nd  29.7                        
+3rd  27.2                        
+4th  31.8                        
+5th  31.7                        
+6th  31.5                        
+7th  11.0                        
+8th  17.5                        
+9th  30.0                        
+10th  23.5                        
+11th                          
+12th                          
+13th                          
+14th                          
+15th                          
+16th                          
+17th                          
+18th                          
+19th                          
+20th                          
+21st                          
+22nd                          
+23rd                          
+24th                          
+25th                          
+26th                          
+27th                          
+28th                          
+29th                          
+30th                          
+31st                          
+Lowest daily  11.0                        
+Monthly mean  26.5                        
+Mean  24.6  21.4  16.6  11.4  7.6  6.1  6.8  9.8  13.3  18.0  21.5  24.2  
+Highest monthly mean  29.7  25.0  19.2  13.3  8.8  7.2  8.0  13.3  15.6  23.3  24.6  27.5  
+Lowest monthly mean  22.1  17.5  14.7  8.4  6.0  5.2  5.6  8.3  10.2  15.2  19.2  20.4  
