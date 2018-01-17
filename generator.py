@@ -86,6 +86,8 @@ for i in range(1, 20):
 	if i == 8:
 		ws2.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	elif i == 9:
+		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 	elif i == 10:
 		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
 	elif i == 11:
@@ -94,7 +96,6 @@ for i in range(1, 20):
 		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 
 # merge and center daily data headings
-# leftBorder = Border(left=Side(style='thin'))
 ws.merge_cells('A1:L1')
 ws.merge_cells('M1:X1')
 for i in range(0,len(dates)*5, 5):
@@ -102,6 +103,9 @@ for i in range(0,len(dates)*5, 5):
 	merge_rhs = get_column_letter(25+i+4)
 	to_merge = str(merge_lhs) + "1:" + str(merge_rhs) + "1"
 	ws.merge_cells(to_merge)
+
+# left border style
+leftBorder = Border(left=Side(style='thin'))
 
 # begin populating the worksheets
 row_count = 0
@@ -202,6 +206,7 @@ for SMI in SMIs:
 		if not all(val==0 for val in perf_x):
 			sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
 			sol_adjusted_perf = adjust_perf(SMI_daily_perf, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
+			ave_adjusted = get_ave_perf(sol_adjusted_perf)
 
 		# populate and format the summary stats sheet
 		for detail in SMI_details:
@@ -213,9 +218,11 @@ for SMI in SMIs:
 			ws2.cell(row=row_count+1, column=col_count+5).value = detail[8]
 			ws2.cell(row=row_count+1, column=col_count+6).value = detail[4]
 			ws2.cell(row=row_count+1, column=col_count+7).value = detail[11]
+			ws2.cell(row=row_count+1, column=col_count+8).border = leftBorder
 			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
-			# ws2.cell(row=row_count+1, column=col_count+9).value = average_adjusted
+			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
+			ws2.cell(row=row_count+1, column=col_count+9).value = ave_adjusted
 			ws2.cell(row=row_count+1, column=col_count+10).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+10).value = perf_variance
 			ws2.cell(row=row_count+1, column=col_count+11).value = site_off_count
@@ -229,13 +236,18 @@ for SMI in SMIs:
 				col_count += 1
 
 		# add forecast data to daily sheet
+		fcount = 0
 		for df in SMI_daily_forecast:
+			if fcount == 0:
+				ws.cell(row=row_count+1, column=col_count+1).border = leftBorder
 			ws.cell(row=row_count+1, column=col_count+1).value = df
 			col_count += 1
+			fcount += 1
 
 		# add encompass and BOM data to daily sheet
 		for y in range(0, len(SMI_daily_gen)):
 			for gen in SMI_daily_gen[y]:
+				ws.cell(row=row_count+1, column=col_count+1).border = leftBorder
 				ws.cell(row=row_count+1, column=col_count+1).value = gen
 
 				ws.cell(row=row_count+1, column=col_count+2).number_format = '0.00%'

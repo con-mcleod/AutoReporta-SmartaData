@@ -259,14 +259,20 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 	return perf
 
 # return total performance as average of daily performance
-def get_ave_perf(SMI_daily_perf):
+def get_ave_perf(daily_perf):
 	count = 0
 	total_perf = 0
-	for perf in SMI_daily_perf:
-		total_perf += perf
-		count += 1
-	ave_perf = total_perf/count
-	return ave_perf
+	for perf in daily_perf:
+		if perf == "":
+			break
+		else:
+			total_perf += perf
+			count += 1
+	if count != 0:
+		ave_perf = total_perf/count
+		return ave_perf
+	else:
+		return None
 
 # return count of number of days with 0 generation
 def get_site_off(SMI_daily_gen):
