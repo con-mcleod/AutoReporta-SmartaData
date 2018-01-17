@@ -6,15 +6,13 @@
 # sorry BOM
 
 
-# to do: 
-# write a less shit script
-# add more cities:
-# NSW: Wagga Wagga, Newcastle, Wollongong, Canberra, Port Macquarie, Coffs Harbour, Ballina, Tamworth
+# Cities:
+# NSW: Sydney, Wagga Wagga, Newcastle, Wollongong, Canberra, Port Macquarie, Coffs Harbour, Ballina, Tamworth
 # WA: Perth
 # NT: Darwin
-# Victoria: Geelong, Bendigo, Albury
-# SA: Port Augusta, Burra
-# QLD: Cairns, Toowoomba, Gold Coast, Mackay, Rockhampton, Bundaberg, Gympie
+# Victoria: Melbourne, Geelong, Bendigo, Albury
+# SA: Adelaide, Port Augusta, Burra
+# QLD: Brisbane, Cairns, Toowoomba, Gold Coast, Mackay, Rockhampton, Bundaberg, Gympie
 
 echo "Enter the weather station location (e.g. Sydney or Townsville):"
 read location

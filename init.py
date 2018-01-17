@@ -207,7 +207,7 @@ with open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 #                            #
 ##############################
 
-bom_folder = os.path.join("bom_data","*")
+bom_folder = os.path.join("weather_data","*")
 
 for file in glob.glob(bom_folder):
 	
@@ -221,8 +221,7 @@ for file in glob.glob(bom_folder):
 		for row in f:
 			row = re.sub(r'\s{2}', ',',row).rstrip()
 			if (day == 0):
-				year = re.sub(r'[^0-9]','',row)
-				year = int("20"+year)
+				year = int(re.sub(r'[^0-9]','',row))
 			else:
 				values = row.split(",")
 				if (day <= 31):
