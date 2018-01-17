@@ -157,9 +157,7 @@ def get_SMI_daily_gen(SMI):
 
 # return list of solar performance for a given state
 def get_state_solar_perf(state, datatype):
-	
 	city = state_to_city(state)
-
 	query = "SELECT obs_value, bom_day, bom_month, bom_year from bom_obs where bom_location=? and datatype=? order by bom_year, bom_month"
 	payload = (city, datatype)
 	result = dbselect(query, payload)
@@ -227,11 +225,9 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 
 	perf = []
 	for gen, date in zip(daily_kWh_gen, dates):
-
 		if gen[0] == "":
 			perf.append(0)
 			continue
-
 		if date[1] == 1:
 			perf.append(gen[0] / SMI_daily_forecast[0])
 		elif date[1] == 2:
@@ -256,7 +252,6 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 			perf.append(gen[0] / SMI_daily_forecast[10])
 		elif date[1] == 12:
 			perf.append(gen[0] / SMI_daily_forecast[11])
-
 	return perf
 
 # return total performance as average of daily performance
@@ -266,9 +261,7 @@ def get_ave_perf(SMI_daily_perf):
 	for perf in SMI_daily_perf:
 		total_perf += perf
 		count += 1
-
 	ave_perf = total_perf/count
-
 	return ave_perf
 
 # return count of number of days with 0 generation
@@ -296,11 +289,9 @@ def state_to_city(state):
 
 # convert performance to an adjusted performance value
 def adjust_perf(SMI_daily_perf, solar_cond_vs_ave, slope, intercept, p_value, r_value):
-	
 	adjusted_result = []
 	if (p_value < .05 and r_value*r_value>.5):
 		for perf, weather in zip(SMI_daily_perf, solar_cond_vs_ave):
-			
 			weather_diff = -(weather - 1)
 			adjusted_perf = perf + slope*weather_diff
 			adjusted_result.append(adjusted_perf)

@@ -149,7 +149,6 @@ for SMI in SMIs:
 			ws.cell(row=row_count+2, column=col_count+26).value = "Curr Perf"
 			ws.cell(row=row_count+2, column=col_count+27).value = "Solar rad"
 			ws.cell(row=row_count+2, column=col_count+28).value = "Temp max"
-			ws.cell(row=row_count+2, column=col_count+29).value = "Rain mm"
 			ws.cell(row=row_count+2, column=col_count+30).value = "Adjusted Perf"
 			col_count += 6
 
@@ -171,14 +170,11 @@ for SMI in SMIs:
 
 		state_solar_perf = get_state_solar_perf(SMI_state, "solar")
 		state_temp_perf = get_state_solar_perf(SMI_state, "temp")
-		state_rain_perf = get_state_solar_perf(SMI_state, "rain")
 		relevant_solar_perf = filter_weather(state_solar_perf, dates)
 		relevant_temp_perf = filter_weather(state_temp_perf, dates)
-		relevant_rain_perf = filter_weather(state_rain_perf, dates)
 
 		solar_vals = get_weather_vals(relevant_solar_perf, len(dates))
 		temp_vals = get_weather_vals(relevant_temp_perf, len(dates))
-		rain_vals = get_weather_vals(relevant_rain_perf, len(dates))
 
 		average_solar = get_ave_condition(SMI_state, "solar")
 		relevant_ave_solar = filter_ave(average_solar, dates)
@@ -208,12 +204,13 @@ for SMI in SMIs:
 			ws2.conditional_formatting.add('J3:J68',CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
 			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
-			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
-			ws2.cell(row=row_count+1, column=col_count+9).value = perf_variance
-			ws2.cell(row=row_count+1, column=col_count+10).value = site_off_count
-			ws2.cell(row=row_count+1, column=col_count+11).number_format = '0.00%'
+			# ws2.cell(row=row_count+1, column=col_count+9).value = average_adjusted
+			ws2.cell(row=row_count+1, column=col_count+10).number_format = '0.00%'
+			ws2.cell(row=row_count+1, column=col_count+10).value = perf_variance
+			ws2.cell(row=row_count+1, column=col_count+11).value = site_off_count
+			ws2.cell(row=row_count+1, column=col_count+12).number_format = '0.00%'
 			ws2.conditional_formatting.add('K3:K68',ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
-			ws2.cell(row=row_count+1, column=col_count+11).value = solar_correlation[0][1]
+			ws2.cell(row=row_count+1, column=col_count+12).value = solar_correlation[0][1]
 
 		# add Salesforce data to daily sheet
 		for x in range(0, len(SMI_details)):
@@ -237,7 +234,7 @@ for SMI in SMIs:
 				ws.cell(row=row_count+1, column=col_count+3).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+3).value = solar_cond_vs_ave[y]
 				ws.cell(row=row_count+1, column=col_count+4).value = temp_vals[y]
-				ws.cell(row=row_count+1, column=col_count+5).value = rain_vals[y]
+				ws.cell(row=row_count+1, column=col_count+5).value = ""
 				ws.cell(row=row_count+1, column=col_count+6).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+6).value = sol_adjusted_perf[y]
 
