@@ -115,35 +115,37 @@ def get_SMI_forecast(SMI):
 # currently ignoring leap year because this program is intended for use from
 # 2017 -> eol which wouldn't be more than 3 years, and next leap year is 2020
 def monthly_to_daily(monthly_forecast):
+
 	results = []
 	for i in range(1, len(monthly_forecast[0])):
-		if not int(monthly_forecast[0][i]):
-			return 0
-		if i == JAN:
+		if (monthly_forecast[0][i]=="" or monthly_forecast[0][i]==0):
+			results.append(0)
+			continue
+		elif i == JAN:
 			result = monthly_forecast[0][i]/days_in_jan
-		if i == FEB: # and not_leap_year
+		elif i == FEB: # and not_leap_year
 			result = monthly_forecast[0][i]/days_in_feb
-		# if i == FEB and leap_year:
+		# elif i == FEB and leap_year:
 			# result = monthly_forecast[0][i]/days_in_feb_leap
-		if i == MAR:
+		elif i == MAR:
 			result = monthly_forecast[0][i]/days_in_mar
-		if i == APR:
+		elif i == APR:
 			result = monthly_forecast[0][i]/days_in_apr
-		if i == MAY:
+		elif i == MAY:
 			result = monthly_forecast[0][i]/days_in_may
-		if i == JUN:
+		elif i == JUN:
 			result = monthly_forecast[0][i]/days_in_jun
-		if i == JUL:
+		elif i == JUL:
 			result = monthly_forecast[0][i]/days_in_jul
-		if i == AUG:
+		elif i == AUG:
 			result = monthly_forecast[0][i]/days_in_aug
-		if i == SEP:
+		elif i == SEP:
 			result = monthly_forecast[0][i]/days_in_sep
-		if i == OCT:
+		elif i == OCT:
 			result = monthly_forecast[0][i]/days_in_oct
-		if i == NOV:
+		elif i == NOV:
 			result = monthly_forecast[0][i]/days_in_nov
-		if i == DEC:
+		elif i == DEC:
 			result = monthly_forecast[0][i]/days_in_dec
 		results.append(result)
 	return results
@@ -228,30 +230,32 @@ def get_daily_perf(SMI, daily_kWh_gen, SMI_daily_forecast, dates):
 		if gen[0] == "":
 			perf.append(0)
 			continue
-		if date[1] == 1:
+		if date[1] == 1 and SMI_daily_forecast[0]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[0])
-		elif date[1] == 2:
+		elif date[1] == 2 and SMI_daily_forecast[1]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[1])
-		elif date[1] == 3:
+		elif date[1] == 3 and SMI_daily_forecast[2]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[2])
-		elif date[1] == 4:
+		elif date[1] == 4 and SMI_daily_forecast[3]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[3])
-		elif date[1] == 5:
+		elif date[1] == 5 and SMI_daily_forecast[4]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[4])
-		elif date[1] == 6:
+		elif date[1] == 6 and SMI_daily_forecast[5]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[5])
-		elif date[1] == 7:
+		elif date[1] == 7 and SMI_daily_forecast[6]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[6])
-		elif date[1] == 8:
+		elif date[1] == 8 and SMI_daily_forecast[7]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[7])
-		elif date[1] == 9:
+		elif date[1] == 9 and SMI_daily_forecast[8]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[8])
-		elif date[1] == 10:
+		elif date[1] == 10 and SMI_daily_forecast[9]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[9])
-		elif date[1] == 11:
+		elif date[1] == 11 and SMI_daily_forecast[10]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[10])
-		elif date[1] == 12:
+		elif date[1] == 12 and SMI_daily_forecast[11]!=0:
 			perf.append(gen[0] / SMI_daily_forecast[11])
+		else:
+			perf.append(0)
 	return perf
 
 # return total performance as average of daily performance

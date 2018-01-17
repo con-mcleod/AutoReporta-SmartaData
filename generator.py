@@ -7,7 +7,7 @@ from scipy import stats
 from sklearn import linear_model
 from openpyxl import Workbook
 from openpyxl.formatting import Rule
-from openpyxl.styles import Color, Font, PatternFill, Border, Alignment
+from openpyxl.styles import Color, Font, PatternFill, Border, Side, Alignment
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from openpyxl.utils import get_column_letter
 from helper_fns import *
@@ -79,7 +79,7 @@ for i in range(0,len(dates)*5, 5):
 	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
-
+# apply conditional formatting to summary stats sheet
 for i in range(1, 20):
 	to_format = get_column_letter(i)
 	to_format = str(to_format) + "3:" + str(to_format) + str(num_rows-1)
@@ -94,6 +94,7 @@ for i in range(1, 20):
 		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 
 # merge and center daily data headings
+# leftBorder = Border(left=Side(style='thin'))
 ws.merge_cells('A1:L1')
 ws.merge_cells('M1:X1')
 for i in range(0,len(dates)*5, 5):
@@ -198,9 +199,9 @@ for SMI in SMIs:
 		perf_x = np.array(SMI_daily_perf)
 		solar_y = np.array(solar_cond_vs_ave)
 
-		sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
-		sol_adjusted_perf = adjust_perf(SMI_daily_perf, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
-		
+		if not all(val==0 for val in perf_x):
+			sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
+			sol_adjusted_perf = adjust_perf(SMI_daily_perf, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
 
 		# populate and format the summary stats sheet
 		for detail in SMI_details:
