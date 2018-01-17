@@ -35,6 +35,7 @@ if(os.path.exists(output_file)):
 ##############################
 
 SMIs = get_all_SMIs()
+num_rows = len(SMIs)+2
 dates = get_all_dates()
 
 ##############################
@@ -61,27 +62,43 @@ for cell in ws2['1:1']:
 
 # bold the top 2 rows and center the top row
 bolded_font = Font(bold=True)
-for i in range(1,24+6*len(dates)+1):
+for i in range(1,24+5*len(dates)+1):
 	ws.cell(row=1, column=i).font = bolded_font
 	ws.cell(row=2, column=i).font = bolded_font
+	ws2.cell(row=1, column=i).font = bolded_font
+	ws2.cell(row=2, column=i).font = bolded_font
 for cell in ws['1:1']:
 	cell.alignment = Alignment(horizontal='center')
 
 # apply conditional format to flag under/overperforming performance
 redFill = PatternFill(start_color='EE1111', end_color='EE1111', fill_type='solid')
 greenFill = PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid')
-for i in range(0,len(dates)*6, 6):
+for i in range(0,len(dates)*5, 5):
 	to_format = get_column_letter(26+i)
-	to_format = str(to_format) + "3:" + str(to_format) + "68"
+	to_format = str(to_format) + "3:" + str(to_format) + str(num_rows-1)
 	ws.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 	ws.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+
+
+for i in range(1, 20):
+	to_format = get_column_letter(i)
+	to_format = str(to_format) + "3:" + str(to_format) + str(num_rows-1)
+	if i == 8:
+		ws2.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	elif i == 10:
+		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
+	elif i == 11:
+		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
+	elif i == 12:
+		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 
 # merge and center daily data headings
 ws.merge_cells('A1:L1')
 ws.merge_cells('M1:X1')
-for i in range(0,len(dates)*6, 6):
+for i in range(0,len(dates)*5, 5):
 	merge_lhs = get_column_letter(25+i)
-	merge_rhs = get_column_letter(25+i+5)
+	merge_rhs = get_column_letter(25+i+4)
 	to_merge = str(merge_lhs) + "1:" + str(merge_rhs) + "1"
 	ws.merge_cells(to_merge)
 
@@ -125,9 +142,6 @@ for SMI in SMIs:
 		# Salesforce and summary stats headings
 		ws2.cell(row=row_count+1, column=col_count+1).value = "Salesforce Details"
 		ws2.cell(row=row_count+1, column=col_count+8).value = "Summary Stats"
-		for i in range(1,25):
-			ws2.cell(row=1, column=i).font = bolded_font
-			ws2.cell(row=2, column=i).font = bolded_font
 		ws2.cell(row=row_count+2, column=col_count+1).value = "SMI"
 		ws2.cell(row=row_count+2, column=col_count+2).value = "ECS"
 		ws2.cell(row=row_count+2, column=col_count+3).value = "Address"
@@ -136,9 +150,9 @@ for SMI in SMIs:
 		ws2.cell(row=row_count+2, column=col_count+6).value = "PV Size"
 		ws2.cell(row=row_count+2, column=col_count+7).value = "Export Control"
 		ws2.cell(row=row_count+2, column=col_count+8).value = "Performance for Period"
-		ws2.cell(row=row_count+2, column=col_count+9).value = "Perf variance"
-		ws2.cell(row=row_count+2, column=col_count+10).value = "Site off #days"
-		ws2.cell(row=row_count+2, column=col_count+11).value = "Perf & Solar-rad Correlation"
+		ws2.cell(row=row_count+2, column=col_count+10).value = "Perf variance"
+		ws2.cell(row=row_count+2, column=col_count+11).value = "Site off #days"
+		ws2.cell(row=row_count+2, column=col_count+12).value = "Perf & Solar-rad Correlation"
 
 		# Daily data headings
 		for date in dates:
@@ -149,8 +163,8 @@ for SMI in SMIs:
 			ws.cell(row=row_count+2, column=col_count+26).value = "Curr Perf"
 			ws.cell(row=row_count+2, column=col_count+27).value = "Solar rad"
 			ws.cell(row=row_count+2, column=col_count+28).value = "Temp max"
-			ws.cell(row=row_count+2, column=col_count+30).value = "Adjusted Perf"
-			col_count += 6
+			ws.cell(row=row_count+2, column=col_count+29).value = "Adjusted Perf"
+			col_count += 5
 
 		row_count += 1
 
@@ -198,10 +212,6 @@ for SMI in SMIs:
 			ws2.cell(row=row_count+1, column=col_count+5).value = detail[8]
 			ws2.cell(row=row_count+1, column=col_count+6).value = detail[4]
 			ws2.cell(row=row_count+1, column=col_count+7).value = detail[11]
-			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
-			ws2.conditional_formatting.add('H3:H68',CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
-			ws2.conditional_formatting.add('I3:I68',CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
-			ws2.conditional_formatting.add('J3:J68',CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
 			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
 			# ws2.cell(row=row_count+1, column=col_count+9).value = average_adjusted
@@ -209,7 +219,6 @@ for SMI in SMIs:
 			ws2.cell(row=row_count+1, column=col_count+10).value = perf_variance
 			ws2.cell(row=row_count+1, column=col_count+11).value = site_off_count
 			ws2.cell(row=row_count+1, column=col_count+12).number_format = '0.00%'
-			ws2.conditional_formatting.add('K3:K68',ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 			ws2.cell(row=row_count+1, column=col_count+12).value = solar_correlation[0][1]
 
 		# add Salesforce data to daily sheet
@@ -234,11 +243,10 @@ for SMI in SMIs:
 				ws.cell(row=row_count+1, column=col_count+3).number_format = '0.00%'
 				ws.cell(row=row_count+1, column=col_count+3).value = solar_cond_vs_ave[y]
 				ws.cell(row=row_count+1, column=col_count+4).value = temp_vals[y]
-				ws.cell(row=row_count+1, column=col_count+5).value = ""
-				ws.cell(row=row_count+1, column=col_count+6).number_format = '0.00%'
-				ws.cell(row=row_count+1, column=col_count+6).value = sol_adjusted_perf[y]
+				ws.cell(row=row_count+1, column=col_count+5).number_format = '0.00%'
+				ws.cell(row=row_count+1, column=col_count+5).value = sol_adjusted_perf[y]
 
-				col_count += 6
+				col_count += 5
 
 	row_count += 1
 

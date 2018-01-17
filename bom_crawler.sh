@@ -2,8 +2,6 @@
 
 # http://www.bom.gov.au/climate/data/index.shtml
 # bom uses dynamic links for their weather station data
-# to get a working link, use the above url and search for the weather stations and copy in below
-# sorry BOM
 
 
 # Cities:
@@ -14,7 +12,7 @@
 # SA: Adelaide, Port Augusta, Burra
 # QLD: Brisbane, Cairns, Toowoomba, Gold Coast, Mackay, Rockhampton, Bundaberg, Gympie
 
-echo "Enter the weather station location (e.g. Sydney or Townsville):"
+echo "Enter the weather station location (e.g. Sydney or CoffsHarbour):"
 read location
 
 echo "Enter the datatype (solar or temp):"
@@ -26,7 +24,7 @@ read URL
 year=`echo $URL | cut -d'=' -f4 | sed 's/[^0-9]//g'`
 prevyear=$year
 
-
+# change 2 to 3 if the year is 2019
 for run in {1..2}
 do
 	if ((run == 2)); then

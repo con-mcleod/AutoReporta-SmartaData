@@ -275,13 +275,13 @@ def get_site_off(SMI_daily_gen):
 # convert state to city
 def state_to_city(state):
 	if state == "QLD":
-		city = "brisbane"
+		city = "Brisbane"
 	elif state == "NSW":
-		city = "sydney"
+		city = "Sydney"
 	elif state == "SA":
-		city = "adelaide"
+		city = "Adelaide"
 	elif state == "VIC":
-		city = "melbourne"
+		city = "Melbourne"
 	else:
 		city = None
 	return city
