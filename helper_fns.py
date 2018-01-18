@@ -190,11 +190,17 @@ def get_weather_vals(relevant_weather_perf, loop_val):
 def get_temp_effect(temp_values):
 	results = []
 	for temp in temp_values:
-		if temp is not None and temp != "":
+		if temp is not None and temp != "" and temp != 0:
 			temp_effect = -(.004 * (temp*.85 - 25))
 		else:
 			temp_effect = 0
 		results.append(temp_effect)
+	return results
+
+def temp_adjust(SMI_daily_perf, temp_effect):
+	results = []
+	for perf, effect in zip(SMI_daily_perf, temp_effect):
+		results.append(perf*(1+effect))
 	return results
 
 # return list of all average solar values in each month and year
@@ -306,7 +312,6 @@ def state_to_city(state):
 	else:
 		city = None
 	return city
-
 
 # convert performance to an adjusted performance value
 def adjust_perf(SMI_daily_perf, solar_cond_vs_ave, slope, intercept, p_value, r_value):

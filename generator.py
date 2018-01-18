@@ -207,12 +207,14 @@ for SMI in SMIs:
 
 		temp_effect = get_temp_effect(temp_vals)
 
-		perf_x = np.array(SMI_daily_perf)
+		temp_adjusted = temp_adjust(SMI_daily_perf, temp_effect)
+
+		perf_x = np.array(temp_adjusted)
 		solar_y = np.array(solar_cond_vs_ave)
 
 		if not all(val==0 for val in perf_x):
 			sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
-			sol_adjusted_perf = adjust_perf(SMI_daily_perf, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
+			sol_adjusted_perf = adjust_perf(temp_adjusted, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
 			ave_adjusted = get_ave_perf(sol_adjusted_perf)
 
 		# populate and format the summary stats sheet
