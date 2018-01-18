@@ -5,14 +5,16 @@
 
 
 # Cities:
-# NSW: Sydney, Wagga Wagga, Newcastle, Wollongong, Canberra, Port Macquarie, Coffs Harbour, Ballina, Tamworth
+# NSW: Sydney, Wagga Wagga, Newcastle, Wollongong, Canberra, 
+#      Port Macquarie, Coffs Harbour, Ballina, Tamworth, Albury
 # WA: Perth
 # NT: Darwin
-# Victoria: Melbourne, Geelong, Bendigo, Albury
+# Victoria: Melbourne, Geelong, Bendigo
 # SA: Adelaide, Port Augusta, Burra
-# QLD: Brisbane, Cairns, Toowoomba, Gold Coast, Mackay, Rockhampton, Bundaberg, Gympie
+# QLD: Brisbane, Cairns, Toowoomba, Gold Coast, 
+#      Mackay, Rockhampton, Bundaberg, Gympie
 
-echo "Enter the weather station location (e.g. Sydney or CoffsHarbour):"
+echo "Enter the weather station location (e.g. Sydney or Coffs Harbour):"
 read location
 
 echo "Enter the datatype (solar or temp):"

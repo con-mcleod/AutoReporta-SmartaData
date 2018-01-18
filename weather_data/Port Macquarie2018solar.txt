@@ -1,0 +1,37 @@
+Port Macquarie2018solar
+1st  21.6                        
+2nd  11.0                        
+3rd  28.9                        
+4th  30.6                        
+5th  31.0                        
+6th  31.5                        
+7th  31.3                        
+8th  31.4                        
+9th  29.0                        
+10th  24.2                        
+11th  17.9                        
+12th  27.7                        
+13th  14.4                        
+14th  29.4                        
+15th  23.3                        
+16th  23.6                        
+17th  30.1                        
+18th                          
+19th                          
+20th                          
+21st                          
+22nd                          
+23rd                          
+24th                          
+25th                          
+26th                          
+27th                          
+28th                          
+29th                          
+30th                          
+31st                          
+Lowest daily  11.0                        
+Monthly mean  25.7                        
+Mean  23.9  21.3  18.3  15.2  11.5  9.8  11.0  14.6  18.4  20.8  22.0  23.4  
+Highest monthly mean  27.4  24.3  22.3  17.8  13.3  11.3  12.7  16.6  21.3  22.9  27.3  25.8  
+Lowest monthly mean  21.3  17.6  13.8  11.4  9.3  8.6  9.4  12.3  16.1  17.7  17.9  19.3  

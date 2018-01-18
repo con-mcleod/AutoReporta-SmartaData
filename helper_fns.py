@@ -104,6 +104,13 @@ def get_SMI_state(SMI):
 	result = dbselect(query,payload)
 	return result
 
+# return address of given SMI(s)
+def get_SMI_address(SMI):
+	query = "SELECT address from SMI_details where SMI=?"
+	payload = (SMI,)
+	result = dbselect(query,payload)
+	return result
+
 # return monthly forecast for given SMI(s)
 def get_SMI_forecast(SMI):
 	query = "SELECT * from forecast where SMI=?"

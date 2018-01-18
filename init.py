@@ -2,6 +2,8 @@
 
 import sys, csv, sqlite3, os, glob, re, shutil
 from collections import defaultdict
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 from helper_fns import *
 
 ##############################
@@ -85,6 +87,12 @@ cursor.execute("""CREATE table BOM_obs(
 	bom_year int, 
 	datatype varchar(10),
 	obs_value float
+	)""")
+
+cursor.execute("""CREATE table BOM_sites(
+	bom_location varchar(50),
+	bom_longitude float,
+	bom_latitude float
 	)""")
 
 
@@ -208,6 +216,7 @@ with open(sf_dataset,'r', encoding='utf-8', errors='ignore') as sf_in:
 ##############################
 
 bom_folder = os.path.join("weather_data","*")
+all_locations = []
 
 for file in glob.glob(bom_folder):
 	
@@ -215,6 +224,9 @@ for file in glob.glob(bom_folder):
 	bom_location = re.sub(r'^.*/','',bom_location)
 	bom_datatype = re.sub(r'^.*[0-9]+','',file)
 	bom_datatype = re.sub(r'\..*$','',bom_datatype)
+
+	if bom_location not in all_locations:
+		all_locations.append(bom_location)
 
 	day = 0
 	with open(file) as f:
@@ -234,6 +246,24 @@ for file in glob.glob(bom_folder):
 				for i in range(1,13):
 					cursor.execute("""INSERT OR IGNORE INTO bom_ave(bom_location, bom_month, bom_year, datatype, average_val)
 							values (?,?,?,?,?)""", (bom_location, i, year, bom_datatype, values[i]))
+
+##############################
+#                            #
+# GEOPY                      #
+#                            #
+##############################
+
+for station in all_locations:
+	geolocator = Nominatim()
+	try:
+		location = geolocator.geocode(station + ", Australia", timeout = 10)
+		if location is not None:
+			print (station, location.latitude, location.longitude)
+			cursor.execute("""INSERT OR IGNORE INTO bom_sites(bom_location, bom_longitude, bom_latitude)
+				values (?,?,?)""", (station, location.longitude, location.latitude))
+	except GeocoderTimedOut as e:
+		print ("Error: geocode failed on %s" % station)
+
 
 ##############################
 #                            #

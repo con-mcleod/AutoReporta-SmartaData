@@ -1,0 +1,37 @@
+Geelong2018solar
+1st  29.7                        
+2nd  19.7                        
+3rd  27.7                        
+4th  30.8                        
+5th  29.6                        
+6th  31.4                        
+7th  14.8                        
+8th  20.5                        
+9th  27.6                        
+10th  25.3                        
+11th  27.1                        
+12th                          
+13th  13.1                        
+14th  30.5                        
+15th  15.8                        
+16th  30.8                        
+17th  30.5                        
+18th                          
+19th                          
+20th                          
+21st                          
+22nd                          
+23rd                          
+24th                          
+25th                          
+26th                          
+27th                          
+28th                          
+29th                          
+30th                          
+31st                          
+Lowest daily  13.1                        
+Monthly mean  25.3                        
+Mean  24.9  20.9  15.4  10.9  7.6  6.2  7.0  9.7  13.6  18.0  20.7  24.1  
+Highest monthly mean  29.6  23.8  18.0  12.3  8.4  6.7  8.2  11.1  14.9  20.3  23.1  26.8  
+Lowest monthly mean  22.1  18.4  13.4  9.1  6.6  5.5  6.4  9.0  12.6  16.1  18.0  22.1  
