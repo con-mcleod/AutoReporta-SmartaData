@@ -57,6 +57,10 @@ ws.title = "Daily Report"
 ws2 = wb.create_sheet()
 ws2.title = "Summary Stats"
 
+# initiate adjusted daily data worksheet
+ws3 = wb.create_sheet()
+ws3.title = "Daily Adjusted"
+
 # merge Summary Stats headings and center
 ws2.merge_cells('A1:G1')
 ws2.merge_cells('H1:K1')
@@ -85,6 +89,13 @@ for i in range(0,len(dates)*5, 5):
 	ws.conditional_formatting.add(actual_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 	ws.conditional_formatting.add(new_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 	ws.conditional_formatting.add(new_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+
+# apply conditional formatting to adjusted daily performance sheet
+for i in range(0,len(dates)):
+	adj_perf = get_column_letter(14+i)
+	adj_perf = str(adj_perf) + "3:" + str(adj_perf) + str(num_rows-1)
+	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
 # apply conditional formatting to summary stats sheet
 for i in range(1, 20):
@@ -189,15 +200,15 @@ for SMI in SMIs:
 		SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
 		SMI_state = get_SMI_state(SMI[0])[0][0]
 
-		########### GEOPY ##########
-		geolocator = Nominatim()
-		SMI_address = get_SMI_address(SMI[0])[0][0]
-		try:
-			location = geolocator.geocode(SMI_address, timeout = 10)
-			if location is not None:
-				print (SMI[0], location.longitude, location.latitude)
-		except GeocoderTimedOut as e:
-			print ("Error: geocode failed on %s" % SMI[0])
+		# ########### GEOPY ##########
+		# geolocator = Nominatim()
+		# SMI_address = get_SMI_address(SMI[0])[0][0]
+		# try:
+		# 	location = geolocator.geocode(SMI_address, timeout = 10)
+		# 	if location is not None:
+		# 		print (SMI[0], location.longitude, location.latitude)
+		# except GeocoderTimedOut as e:
+		# 	print ("Error: geocode failed on %s" % SMI[0])
 
 		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
 		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
@@ -255,6 +266,7 @@ for SMI in SMIs:
 		for x in range(0, len(SMI_details)):
 			for detail in SMI_details[x]:
 				ws.cell(row=row_count+1, column=col_count+1).value = detail
+				ws3.cell(row=row_count+1, column=col_count+1).value = detail
 				col_count += 1
 
 		# add forecast data to daily sheet
@@ -266,9 +278,18 @@ for SMI in SMIs:
 			col_count += 1
 			fcount += 1
 
+		# populate the adjusted performance sheet
+		col3_count = col_count - 12
+		for z in range(0, len(SMI_daily_gen)):
+			for gen in SMI_daily_gen[z]:
+				ws3.cell(row=row_count+1, column=col3_count+1).number_format = '0.00%'
+				ws3.cell(row=row_count+1, column=col3_count+1).value = sol_adjusted_perf[z]
+				col3_count += 1
+
 		# add encompass and BOM data to daily sheet
 		for y in range(0, len(SMI_daily_gen)):
 			for gen in SMI_daily_gen[y]:
+
 				ws.cell(row=row_count+1, column=col_count+1).border = leftBorder
 				ws.cell(row=row_count+1, column=col_count+1).value = gen
 
