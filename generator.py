@@ -10,11 +10,7 @@ from openpyxl.formatting import Rule
 from openpyxl.styles import Color, Font, PatternFill, Border, Side, Alignment
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from openpyxl.utils import get_column_letter
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
-from geopy.distance import great_circle
 from helper_fns import *
-
 
 ##############################
 #                            #
@@ -199,16 +195,6 @@ for SMI in SMIs:
 		SMI_monthly_forecast = get_SMI_forecast(SMI[0])
 		SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
 		SMI_state = get_SMI_state(SMI[0])[0][0]
-
-		# ########### GEOPY ##########
-		# geolocator = Nominatim()
-		# SMI_address = get_SMI_address(SMI[0])[0][0]
-		# try:
-		# 	location = geolocator.geocode(SMI_address, timeout = 10)
-		# 	if location is not None:
-		# 		print (SMI[0], location.longitude, location.latitude)
-		# except GeocoderTimedOut as e:
-		# 	print ("Error: geocode failed on %s" % SMI[0])
 
 		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
 		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)

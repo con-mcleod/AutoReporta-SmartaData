@@ -69,6 +69,34 @@ def month_to_num(month):
 	else:
 		return 0
 
+# return the address of the given SMI
+def get_SMI_address(SMI):
+	print (SMI)
+	query = "SELECT address from SMI_details where SMI=?"
+	payload = (SMI,)
+	address = dbselect(query, payload)
+	return address
+
+# return SMI lat/long
+def get_SMI_coords(SMI):
+	query = "SELECT SMI_latitude, SMI_longitude from SMI_coords where SMI=?"
+	payload = (SMI,)
+	smi_coords = dbselect(query, payload)
+	return smi_coords
+
+# return closest weather station to SMI
+def find_closest_stn(SMI, SMI_latitude, SMI_longitude):
+	query = """SELECT bom_location, bom_latitude, bom_longitude, 
+				((69.1 * (bom_latitude - ?)) * (69.1 * (bom_latitude - ?))) +
+				((69.1 * (? - bom_longitude)) * (69.1 * (? - bom_longitude))) AS distance
+				FROM BOM_coords
+				GROUP BY distance
+				ORDER BY distance
+				limit 1"""
+	payload = (SMI_latitude, SMI_latitude, SMI_longitude, SMI_longitude)
+	result = dbselect(query, payload)
+	return result
+
 ##############################
 #                            #
 # generator.py helpers       #

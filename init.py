@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, csv, sqlite3, os, glob, re, shutil
+import sys, csv, sqlite3, os, glob, re, shutil, math
 from collections import defaultdict
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
@@ -56,6 +56,12 @@ cursor.execute("""CREATE TABLE SMI_details(
 	export_control int check(export_control in (0,1))
 	)""")
 
+cursor.execute("""CREATE table SMI_coords(
+	SMI varchar(10),
+	SMI_longitude float,
+	SMI_latitude float
+	)""")
+
 cursor.execute("""CREATE TABLE forecast(
 	SMI varchar(10) primary key,
 	jan float,
@@ -89,12 +95,17 @@ cursor.execute("""CREATE table BOM_obs(
 	obs_value float
 	)""")
 
-cursor.execute("""CREATE table BOM_sites(
+cursor.execute("""CREATE table BOM_coords(
 	bom_location varchar(50),
 	bom_longitude float,
 	bom_latitude float
 	)""")
 
+cursor.execute("""CREATE table closest_stn(
+	SMI varchar(10) primary key,
+	weather_stn varchar (15),
+	distance float
+	)""")
 
 ##############################
 #                            #
@@ -104,6 +115,7 @@ cursor.execute("""CREATE table BOM_sites(
 
 row_count = 0
 columns = defaultdict(list)
+enc_SMIs = []
 with open(enc_dataset,'r', encoding='utf-8') as enc_in:
 	reader = csv.reader(enc_in)
 	for row in reader:
@@ -118,6 +130,8 @@ for col in columns:
 	dates = columns[0][1:]
 
 	for SMI in SMIs:
+		if SMI not in enc_SMIs:
+			enc_SMIs.append(SMI)
 		if (SMI and datatype == "kWh Generation"):
 			for i in range(row_count-1):
 				day = re.sub(r' .*', '', dates[i])
@@ -249,27 +263,82 @@ for file in glob.glob(bom_folder):
 
 ##############################
 #                            #
-# GEOPY                      #
-#                            #
-##############################
-
-for station in all_locations:
-	geolocator = Nominatim()
-	try:
-		location = geolocator.geocode(station + ", Australia", timeout = 10)
-		if location is not None:
-			print (station, location.latitude, location.longitude)
-			cursor.execute("""INSERT OR IGNORE INTO bom_sites(bom_location, bom_longitude, bom_latitude)
-				values (?,?,?)""", (station, location.longitude, location.latitude))
-	except GeocoderTimedOut as e:
-		print ("Error: geocode failed on %s" % station)
-
-
-##############################
-#                            #
-# COMMIT TO DATABASE         #
+# COMMIT FILES TO DATABASE   #
 #                            #
 ##############################
 
 connection.commit()
 connection.close()
+
+##############################
+#                            #
+# GEOPY                      #
+#                            #
+##############################
+
+connection = sqlite3.connect(DATABASE)
+cursor = connection.cursor()
+
+for station in all_locations:
+	geolocator = Nominatim()
+	try:
+		location = geolocator.geocode(station + ", Australia", timeout = 6)
+		if location is not None:
+			print (station, location.latitude, location.longitude)
+			cursor.execute("""INSERT OR IGNORE INTO bom_coords(bom_location, bom_longitude, bom_latitude)
+				values (?,?,?)""", (station, location.longitude, location.latitude))
+	except GeocoderTimedOut as e:
+		print ("Error: geocode failed on %s" % station)
+
+for SMI in enc_SMIs:
+	address = get_SMI_address(SMI)[0][0]
+	geolocator = Nominatim()
+	try:
+		location = geolocator.geocode(address, timeout = 6)
+		if location is not None:
+			print (SMI, location.latitude, location.longitude)
+			cursor.execute("""INSERT OR IGNORE INTO SMI_coords(SMI, SMI_longitude, SMI_latitude) 
+				VALUES (?,?,?)""", (SMI, location.longitude, location.latitude))
+	except GeocoderTimedOut as e:
+		print ("Error: geocode failed on %s" % SMI)
+
+##############################
+#                            #
+# COMMIT GEOPY TO DATABASE   #
+#                            #
+##############################
+
+connection.commit()
+connection.close()
+
+##############################
+#                            #
+# NEAREST NEIGHBOUR          #
+#                            #
+##############################
+
+connection = sqlite3.connect(DATABASE)
+cursor = connection.cursor()
+
+for SMI in enc_SMIs:
+	SMI_coords = get_SMI_coords(SMI)
+	
+	if SMI_coords:
+		SMI_latitude = SMI_coords[0][0]
+		SMI_longitude = SMI_coords[0][1]
+		weather_stn = find_closest_stn(SMI, SMI_latitude, SMI_longitude)
+		location = weather_stn[0][0]
+		distance = math.sqrt(weather_stn[0][3])
+		cursor.execute("""INSERT OR IGNORE INTO closest_stn(SMI, weather_stn, distance) 
+				VALUES (?,?,?)""", (SMI, location, distance))
+
+##############################
+#                            #
+# COMMIT NEIGHBOUR TO DB     #
+#                            #
+##############################
+
+connection.commit()
+connection.close()
+
+
