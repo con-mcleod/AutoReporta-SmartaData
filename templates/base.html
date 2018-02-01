@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>SmartaData</title>
+	<link href="{{url_for('static', filename='main.css')}}") rel="stylesheet">
+</head>
+<body>
+
+<header class="container">
+
+	{% if notLogged %}
+	<center>
+		<div class="logo">
+			<a href="{{url_for('login')}}">
+				<img src="static/logo.png" width="100px">
+			</a>
+		</div>
+	</center>
+	{% else %}
+	<center>
+		<div class="logo">
+			<a href="{{url_for('dashboard')}}">
+				<img src="static/logo.png" width="100px">
+			</a>
+		</div>
+	</center>
+	{% endif %}
+
+</header>
+
+
+{% block body_contents %}
+
+
+{% endblock %}
+
+</body>
+</html>

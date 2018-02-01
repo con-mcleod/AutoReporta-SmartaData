@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+<center>
+
+	<Form method="POST">
+		<button type="submit" name="dashboard">Return to dashboard</button>
+	</Form>
+
+	<img src="data:image/png;base64, {{ plot_url }}">
+
+</center>
+{% endblock %}

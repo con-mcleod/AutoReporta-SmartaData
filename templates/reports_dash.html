@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+<style>
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #fc9c4e;
+    color: white;
+}
+</style>
+
+	<center>
+
+		<Form method="POST">
+			<button type="submit" name="dashboard">Return to dashboard</button>
+		</Form>
+
+		<table style="border: 1px solid black;">
+			<th>SMI</th>
+			<th>Unadjusted Perf</th>
+			<th>Adjusted Perf</th>
+			<th># off days</th>
+			<th>Perf variance</th>
+			<th>Closest Weather stn</th>
+			<th>Distance from stn</th>
+			{% for SMI in SMIs_stats %}
+			<tr>
+				<Form method="POST">
+					<td class="c1"><button type="submit" name="{{SMI[0][0]}}"">{{SMI[0][0]}}</button></td>
+				</Form>
+				<td class="c2">{{SMI[1]}}</td>
+				<td class="c3">{{SMI[2]}}</td>
+				<td class="c4">{{SMI[3]}}</td>
+				<td class="c5">{{SMI[4]}}</td>
+				<td class="c6">{{SMI[5]}}</td>
+				<td class="c7">{{SMI[6]}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+
+		{% if SMIs_stats %}
+			{% for SMI in SMIs_stats %}
+				<Form method="POST">
+					<button type="submit" name="{{SMI[0][0]}}">{{SMI[0][0]}}</button>
+					<p>Unadjusted: {{SMI[1]}} ||| Adjusted: {{SMI[2]}}</p>
+				</Form>
+			{% endfor %}
+		{% endif %}
+
+
+	</center>
+
+
+{% endblock %}

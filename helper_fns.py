@@ -2,6 +2,9 @@
 
 import sys, csv, os, sqlite3, re
 from constants import *
+from flask_login import UserMixin, LoginManager,login_user, current_user, login_required, logout_user
+from server import *
+from smartadata import *
 
 ##############################
 #                            #
@@ -206,6 +209,13 @@ def get_closest_stn(SMI):
 	result = dbselect(query, payload)
 	return result
 
+# return the location of the closest weather stn
+def get_closest_stn2(SMI):
+	query = "SELECT weather_stn from closest_stn where SMI=?"
+	payload = (SMI,)
+	result = dbselect(query, payload)
+	return result
+
 # return distance between SMI and it's closest weather station
 def get_SMI_stn_dist(SMI):
 	query = "SELECT distance from closest_stn where SMI=?"
@@ -213,6 +223,13 @@ def get_SMI_stn_dist(SMI):
 	result = dbselect(query, payload)
 	return result
 
+# return distance between SMI and it's closest weather station
+def get_SMI_stn_dist2(SMI):
+	query = "SELECT distance from closest_stn where SMI=?"
+	payload = (SMI,)
+	result = dbselect(query, payload)
+	return result
+	
 # return list of only relevant solar values
 def filter_weather(weather_cond, dates):
 	relevant = []
@@ -373,4 +390,50 @@ def create_list_of_blanks(length):
 		i += 1
 	return zero_list
 
+def numbered_list(length):
+	i = 1
+	numbered_list = []
+	while i < length+1:
+		numbered_list.append(i)
+		i+=1
+	return numbered_list
 
+
+##############################
+#                            #
+# USER INTERFACE HELPERS     #
+#                            #
+##############################
+
+#######################
+# User Class
+#######################
+class User(UserMixin):
+	def __init__(self, id):
+		self.id = id
+
+	@property
+	def user_id(self):
+		return self.id
+
+def get_user(user_id):
+	return User(user_id)
+
+@login_manager.user_loader
+def load_user(user_id):
+	user = get_user(user_id)
+	return user	
+
+def check_uid(uid):
+	if uid == "Connor" or uid == "Tasha" or uid == "Ovi":
+		return True
+	else:
+		return False
+
+def check_pw(uid,pw):
+	if (uid == "Connor" or uid == "Tasha" or uid == "Ovi") and pw == ";":
+		user = get_user(uid)
+		login_user(user)
+		return True
+	else:
+		return False

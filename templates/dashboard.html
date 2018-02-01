@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+	<center>
+		<form method="POST">
+			<h3>AutoReporta & SmartaData</h3>
+			<p>Encompass file:</p> 
+			<input type="file" name="encompass_csv" accept=".csv"/>
+			<br>
+			<p>Select time period:</p>
+			<select>
+				<option value="1min">1min</option>
+				<option value="30min">30min</option>
+				<option value="hourly">hourly</option>
+				<option value="daily">daily</option>
+				<option value="monthly">monthly</option>
+			</select>
+
+			<br><br>
+
+			<p>Salesforce file:</p> 
+			<input type="file" name="salesforce_csv" accept=".csv"/>
+
+			<br><br>
+
+			<button type="submit" name="bom_grab">Bom grabber</button>
+
+			<br><br>
+
+			<button type="submit" name="run_reports">Run reports</button>
+		</form>
+	</center>
+
+{% endblock %}

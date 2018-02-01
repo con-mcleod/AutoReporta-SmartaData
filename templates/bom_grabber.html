@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+	<center>
+		<form method="POST">
+			<br>
+			City: <input type="text" name="city"><br><br>
+			Datatype:
+			<select>
+				<option value="solar">Solar Radiation</option>
+				<option value="temp">Temperature</option>
+			</select>
+			<br><br>
+			<button type="submit"><a href="http://www.bom.gov.au/climate/data/index.shtml" target="_blank">Get URL</a></button><br>
+			URL: <input type="text" name="URL">
+			<br><br>
+			<button type="submit" name="dashboard">Return to Dashboard</button>
+			<button type="submit" name="bom_script">Grab bom data</button>
+		</form>
+	</center>
+
+
+{% endblock %}

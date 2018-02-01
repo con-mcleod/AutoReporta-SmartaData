@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+
+
+{% block body_contents %}
+
+<center>
+	<form method="POST">
+		<input placeholder="User ID" name="uid" style="width: 200px; height: 20px;"/>
+		<br>
+		<input placeholder="Password" name="pw" style="width: 200px; height: 20px;" />
+		<br><br>
+		<button type="submit" name="login">Login</button>
+	</form>
+
+	{% if error %}
+		<p class="error"><strong>Error:</strong></p> {{ error }}
+	{% endif %}
+</center>
+
+{% endblock %}
