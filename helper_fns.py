@@ -125,9 +125,9 @@ def get_SMI_details(SMI):
 	result = dbselect(query,payload)
 	return result
 
-# return state (location) of given SMI(s)
-def get_SMI_state(SMI):
-	query = "SELECT state from SMI_details where SMI=?"
+# return weather station (location) of given SMI(s)
+def get_SMI_weather_stn(SMI):
+	query = "SELECT weather_stn from closest_stn where SMI=?"
 	payload = (SMI,)
 	result = dbselect(query,payload)
 	return result
@@ -193,10 +193,23 @@ def get_SMI_daily_gen(SMI):
 	return result
 
 # return list of solar performance for a given state
-def get_state_solar_perf(state, datatype):
-	city = state_to_city(state)
+def get_stn_solar_perf(stn, datatype):
 	query = "SELECT obs_value, bom_day, bom_month, bom_year from bom_obs where bom_location=? and datatype=? order by bom_year, bom_month"
-	payload = (city, datatype)
+	payload = (stn, datatype)
+	result = dbselect(query, payload)
+	return result
+
+# return the location of the closest weather stn
+def get_closest_stn(SMI):
+	query = "SELECT weather_stn from closest_stn where SMI=?"
+	payload = (SMI)
+	result = dbselect(query, payload)
+	return result
+
+# return distance between SMI and it's closest weather station
+def get_SMI_stn_dist(SMI):
+	query = "SELECT distance from closest_stn where SMI=?"
+	payload = (SMI)
 	result = dbselect(query, payload)
 	return result
 
@@ -239,10 +252,9 @@ def temp_adjust(SMI_daily_perf, temp_effect):
 	return results
 
 # return list of all average solar values in each month and year
-def get_ave_condition(state, datatype):
-	city = state_to_city(state)
+def get_ave_condition(stn, datatype):
 	query = "SELECT average_val, bom_month, bom_year, bom_location from bom_ave where bom_location=? and datatype=?"
-	payload = (city, datatype)
+	payload = (stn, datatype)
 	result = dbselect(query, payload)
 	return result
 
@@ -256,12 +268,11 @@ def filter_ave(average_list, dates):
 	return relevant
 
 # return list of weather condition vs average
-def compare_cond_to_ave(cond_vals, dates, state, relevant_ave):
-	city = state_to_city(state)
+def compare_cond_to_ave(cond_vals, dates, stn, relevant_ave):
 	results = []
 	for val, date in zip(cond_vals, dates):
 		for ave in relevant_ave:
-			if city==ave[3] and date[2]==ave[2] and date[1]==ave[1]:
+			if stn==ave[3] and date[2]==ave[2] and date[1]==ave[1]:
 				if (val is not ""):
 					weather_var = val/ave[0]
 				else:
@@ -334,33 +345,32 @@ def get_site_off(SMI_daily_gen):
 			count += 1
 	return count
 
-# convert state to city
-def state_to_city(state):
-	if state == "QLD":
-		city = "Brisbane"
-	elif state == "NSW":
-		city = "Sydney"
-	elif state == "SA":
-		city = "Adelaide"
-	elif state == "VIC":
-		city = "Melbourne"
-	else:
-		city = None
-	return city
-
 # convert performance to an adjusted performance value
 def adjust_perf(SMI_daily_perf, solar_cond_vs_ave, slope, intercept, p_value, r_value):
 	adjusted_result = []
-	if (p_value < .05 and r_value*r_value>.5):
+	if (p_value < .1 and r_value*r_value>.5):
 		for perf, weather in zip(SMI_daily_perf, solar_cond_vs_ave):
-			weather_diff = -(weather - 1)
-			adjusted_perf = perf + slope*weather_diff
-			adjusted_result.append(adjusted_perf)
+			if perf == 0:
+				adjusted_result.append(0)
+			elif (weather == 0):
+				adjusted_result.append("")
+			else:
+				weather_diff = -(weather - 1)
+				adjusted_perf = perf + slope*weather_diff
+				adjusted_result.append(adjusted_perf)				
 
 	if not adjusted_result:
 		for i in range(0, len(SMI_daily_perf)):
 			adjusted_result.append("")
 	return adjusted_result
 
+# create a list of blanks
+def create_list_of_blanks(length):
+	i = 0
+	zero_list = []
+	while i < length:
+		zero_list.append("")
+		i += 1
+	return zero_list
 
 

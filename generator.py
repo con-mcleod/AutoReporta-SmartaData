@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from sklearn import linear_model
 from openpyxl import Workbook
-from openpyxl.formatting import Rule
 from openpyxl.styles import Color, Font, PatternFill, Border, Side, Alignment
-from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
+from openpyxl.styles.differential import DifferentialStyle
+from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule, Rule
 from openpyxl.utils import get_column_letter
 from helper_fns import *
 
@@ -55,7 +55,11 @@ ws2.title = "Summary Stats"
 
 # initiate adjusted daily data worksheet
 ws3 = wb.create_sheet()
-ws3.title = "Daily Adjusted"
+ws3.title = "Daily Unadjusted"
+
+# initiate encompass daily data worksheet
+ws4 = wb.create_sheet()
+ws4.title = "Daily Adjusted"
 
 # merge Summary Stats headings and center
 ws2.merge_cells('A1:G1')
@@ -76,6 +80,7 @@ for cell in ws['1:1']:
 # apply conditional format to flag under/overperforming performance
 redFill = PatternFill(start_color='FA5858', end_color='FA5858', fill_type='solid')
 greenFill = PatternFill(start_color='9Afe2e', end_color='9Afe2e', fill_type='solid')
+noFill = PatternFill(fill_type=None)
 for i in range(0,len(dates)*5, 5):
 	actual_perf = get_column_letter(26+i)
 	new_perf = get_column_letter(26+i+3)
@@ -86,12 +91,20 @@ for i in range(0,len(dates)*5, 5):
 	ws.conditional_formatting.add(new_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 	ws.conditional_formatting.add(new_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
-# apply conditional formatting to adjusted daily performance sheet
+# apply conditional formatting to encompass daily performance sheet
 for i in range(0,len(dates)):
-	adj_perf = get_column_letter(14+i)
+	adj_perf = get_column_letter(13+i)
 	adj_perf = str(adj_perf) + "3:" + str(adj_perf) + str(num_rows-1)
 	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
 	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+
+# apply conditional formatting to adjusted daily performance sheet
+for i in range(0,len(dates)):
+	adj_perf = get_column_letter(13+i)
+	adj_perf = str(adj_perf) + "3:" + str(adj_perf) + str(num_rows-1)
+	# ws4.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws4.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	
 
 # apply conditional formatting to summary stats sheet
 for i in range(1, 20):
@@ -173,6 +186,8 @@ for SMI in SMIs:
 		ws2.cell(row=row_count+2, column=col_count+10).value = "Perf variance"
 		ws2.cell(row=row_count+2, column=col_count+11).value = "Site off #days"
 		ws2.cell(row=row_count+2, column=col_count+12).value = "Perf & Solar-rad Correlation"
+		ws2.cell(row=row_count+2, column=col_count+13).value = "Closest stn"
+		ws2.cell(row=row_count+2, column=col_count+14).value = "Distance from stn"
 
 		# Daily data headings
 		for date in dates:
@@ -194,7 +209,6 @@ for SMI in SMIs:
 		SMI_details = get_SMI_details(SMI[0])
 		SMI_monthly_forecast = get_SMI_forecast(SMI[0])
 		SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
-		SMI_state = get_SMI_state(SMI[0])[0][0]
 
 		SMI_daily_gen = get_SMI_daily_gen(SMI[0])
 		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
@@ -202,30 +216,47 @@ for SMI in SMIs:
 		site_off_count = get_site_off(SMI_daily_gen)
 		perf_variance = np.var(SMI_daily_perf)
 
-		state_solar_perf = get_state_solar_perf(SMI_state, "solar")
-		state_temp_perf = get_state_solar_perf(SMI_state, "temp")
-		relevant_solar_perf = filter_weather(state_solar_perf, dates)
-		relevant_temp_perf = filter_weather(state_temp_perf, dates)
+		stn_checker = get_SMI_weather_stn(SMI[0])
 
-		solar_vals = get_weather_vals(relevant_solar_perf, len(dates))
-		temp_vals = get_weather_vals(relevant_temp_perf, len(dates))
+		if (stn_checker):
 
-		average_solar = get_ave_condition(SMI_state, "solar")
-		relevant_ave_solar = filter_ave(average_solar, dates)
-		solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_state, relevant_ave_solar)
-		solar_correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
+			SMI_weather_stn = get_SMI_weather_stn(SMI[0])[0][0]
 
-		temp_effect = get_temp_effect(temp_vals)
+			stn_solar_perf = get_stn_solar_perf(SMI_weather_stn, "solar")
+			stn_temp_perf = get_stn_solar_perf(SMI_weather_stn, "temp")
+			relevant_solar_perf = filter_weather(stn_solar_perf, dates)
+			relevant_temp_perf = filter_weather(stn_temp_perf, dates)
 
-		temp_adjusted = temp_adjust(SMI_daily_perf, temp_effect)
+			solar_vals = get_weather_vals(relevant_solar_perf, len(dates))
+			temp_vals = get_weather_vals(relevant_temp_perf, len(dates))
 
-		perf_x = np.array(temp_adjusted)
-		solar_y = np.array(solar_cond_vs_ave)
+			average_solar = get_ave_condition(SMI_weather_stn, "solar")
+			relevant_ave_solar = filter_ave(average_solar, dates)
+			solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_weather_stn, relevant_ave_solar)
+			solar_correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
+			closest_weather_stn = get_closest_stn(SMI)[0][0]
+			# 1.60934 is converting mile to km
+			SMI_stn_distance = int(1.60934*get_SMI_stn_dist(SMI)[0][0])
 
-		if not all(val==0 for val in perf_x):
-			sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
-			sol_adjusted_perf = adjust_perf(temp_adjusted, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
-			ave_adjusted = get_ave_perf(sol_adjusted_perf)
+			temp_effect = get_temp_effect(temp_vals)
+
+			temp_adjusted = temp_adjust(SMI_daily_perf, temp_effect)
+
+			perf_x = np.array(temp_adjusted)
+			solar_y = np.array(solar_cond_vs_ave)
+
+			if not all(val==0 for val in perf_x):
+				sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
+				sol_adjusted_perf = adjust_perf(temp_adjusted, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
+				ave_adjusted = get_ave_perf(sol_adjusted_perf)
+
+		else:
+			ave_adjusted = ""
+			solar_correlation = [["",""]]
+			sol_adjusted_perf = create_list_of_blanks(len(dates))
+			solar_cond_vs_ave = create_list_of_blanks(len(dates))
+			temp_effect = create_list_of_blanks(len(dates))
+
 
 		# populate and format the summary stats sheet
 		for detail in SMI_details:
@@ -247,12 +278,15 @@ for SMI in SMIs:
 			ws2.cell(row=row_count+1, column=col_count+11).value = site_off_count
 			ws2.cell(row=row_count+1, column=col_count+12).number_format = '0.00%'
 			ws2.cell(row=row_count+1, column=col_count+12).value = solar_correlation[0][1]
+			ws2.cell(row=row_count+1, column=col_count+13).value = closest_weather_stn
+			ws2.cell(row=row_count+1, column=col_count+14).value = SMI_stn_distance
 
-		# add Salesforce data to daily sheet
+		# add Salesforce data to daily sheets
 		for x in range(0, len(SMI_details)):
 			for detail in SMI_details[x]:
 				ws.cell(row=row_count+1, column=col_count+1).value = detail
 				ws3.cell(row=row_count+1, column=col_count+1).value = detail
+				ws4.cell(row=row_count+1, column=col_count+1).value = detail
 				col_count += 1
 
 		# add forecast data to daily sheet
@@ -264,13 +298,26 @@ for SMI in SMIs:
 			col_count += 1
 			fcount += 1
 
-		# populate the adjusted performance sheet
+		# populate the unadjusted performance sheet
 		col3_count = col_count - 12
 		for z in range(0, len(SMI_daily_gen)):
 			for gen in SMI_daily_gen[z]:
 				ws3.cell(row=row_count+1, column=col3_count+1).number_format = '0.00%'
-				ws3.cell(row=row_count+1, column=col3_count+1).value = sol_adjusted_perf[z]
+				ws3.cell(row=row_count+1, column=col3_count+1).value = SMI_daily_perf[z]
 				col3_count += 1
+
+		# populate the adjusted performance sheet
+		col4_count = col_count - 12
+		for z in range(0, len(SMI_daily_gen)):
+			for gen in SMI_daily_gen[z]:
+				ws4.cell(row=row_count+1, column=col4_count+1).number_format = '0.00%'
+				ws4.cell(row=row_count+1, column=col4_count+1).value = sol_adjusted_perf[z]
+				if ws4.cell(row=row_count+1, column=col4_count+1).value in [None,'','None']:
+					pass
+				elif ws4.cell(row=row_count+1, column=col4_count+1).value < .7:
+					ws4.cell(row=row_count+1, column=col4_count+1).fill = redFill
+
+				col4_count += 1
 
 		# add encompass and BOM data to daily sheet
 		for y in range(0, len(SMI_daily_gen)):

@@ -329,6 +329,7 @@ for SMI in enc_SMIs:
 		weather_stn = find_closest_stn(SMI, SMI_latitude, SMI_longitude)
 		location = weather_stn[0][0]
 		distance = math.sqrt(weather_stn[0][3])
+		print (SMI, location, distance)
 		cursor.execute("""INSERT OR IGNORE INTO closest_stn(SMI, weather_stn, distance) 
 				VALUES (?,?,?)""", (SMI, location, distance))
 
@@ -340,5 +341,3 @@ for SMI in enc_SMIs:
 
 connection.commit()
 connection.close()
-
-
