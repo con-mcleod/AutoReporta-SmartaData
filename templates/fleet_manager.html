@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+<style>
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #fc9c4e;
+    color: white;
+}
+
+#myInput {
+    background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+    background-position: 10px 12px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+    font-size: 16px; /* Increase font-size */
+    padding: 12px 20px 12px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+    margin-bottom: 12px; /* Add some space below the input */
+}
+
+#myTable {
+    border-collapse: collapse; /* Collapse borders */
+    border: 1px solid #ddd; /* Add a grey border */
+    font-size: 18px; /* Increase font-size */
+}
+
+#myTable th, #myTable td {
+    text-align: left; /* Left-align text */
+    padding: 12px; /* Add padding */
+}
+
+#myTable tr {
+    /* Add a bottom border to all table rows */
+    border-bottom: 1px solid #ddd; 
+}
+
+#myTable tr.header, #myTable tr:hover {
+    /* Add a grey background color to the table header and on hover */
+    background-color: #fc9c4e;
+}
+</style>
+
+<script>
+function myFunction() {
+  // Declare variables 
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    } 
+  }
+}
+</script>
+
+
+
+	<center>
+
+		<Form method="POST">
+			<button type="submit" name="dashboard">Return to dashboard</button>
+		</Form>
+
+		<br>
+
+		<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search...">
+
+		<table id="myTable" style="border: 1px solid black;">
+			<tr class="header">
+				<th>SMI</th>
+				<th>Today's Perf</th>
+				<th>Month Perf</th>
+				<th>3 Month Perf</th>
+				<th>12 Month Perf</th>
+				<th>Lifetime kWh Gen</th>
+				<th>Last Site Visit</th>
+				<th>Case History</th>
+			</tr>
+			{% for SMI in fleet %}
+			<tr>
+				<Form method="POST">
+					<td class="c1"><button type="submit" name="{{SMI[0]}}"">{{SMI[0]}}</button></td>
+					<td class="c2"></td>
+					<td class="c3"></td>
+					<td class="c4"></td>
+					<td class="c5"></td>
+					<td class="c6"></td>
+					<td class="c7">DDMMYY</td>
+					<td class="c8"><button type="submit" name="{{SMI[0]}}_cases"">{{SMI[0]}} Cases</button></td>
+				</Form>
+			</tr>
+			{% endfor %}
+		</table>
+	</center>
+
+{% endblock %}

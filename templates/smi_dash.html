@@ -10,7 +10,48 @@
 		<button type="submit" name="dashboard">Return to dashboard</button>
 	</Form>
 
-	<img src="data:image/png;base64, {{ plot_url }}">
+	<h3>Forecasted Daily Generation</h3>
+
+	<table style="border: 1px solid black;">
+		<th>Jan</th>
+		<th>Feb</th>
+		<th>Mar</th>
+		<th>Apr</th>
+		<th>May</th>
+		<th>Jun</th>
+		<th>Jul</th>
+		<th>Aug</th>
+		<th>Sep</th>
+		<th>Oct</th>
+		<th>Nov</th>
+		<th>Dec</th>
+		
+		<tr>
+			<td class="c1">{{df[0]}}</td>
+			<td class="c2">{{df[1]}}</td>
+			<td class="c3">{{df[2]}}</td>
+			<td class="c4">{{df[3]}}</td>
+			<td class="c5">{{df[4]}}</td>
+			<td class="c6">{{df[5]}}</td>
+			<td class="c7">{{df[6]}}</td>
+			<td class="c8">{{df[7]}}</td>
+			<td class="c9">{{df[8]}}</td>
+			<td class="c10">{{df[9]}}</td>
+			<td class="c11">{{df[10]}}</td>
+			<td class="c12">{{df[11]}}</td>
+		</tr>
+	</table>
+
+	{% if plot_url2 %}
+		<img src="data:image/png;base64, {{ plot_url2 }}">
+	{% endif %}
+
+	<h3>Adjusted Daily Generation</h3>
+	{% if plot_url %}
+		<img src="data:image/png;base64, {{ plot_url }}">
+	{% endif %}
+
+
 
 </center>
 {% endblock %}

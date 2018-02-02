@@ -45,6 +45,8 @@ def dashboard():
 			return redirect(url_for('bom_grabber'))
 		elif "run_reports" in request.form:
 			return redirect(url_for('reports_dash'))
+		elif "fleet_manager" in request.form:
+			return redirect(url_for('fleet_manager'))
 
 	return render_template('dashboard.html')
 
@@ -64,7 +66,28 @@ def bom_grabber():
 	return render_template('bom_grabber.html')
 
 ########################
-#     REPORTS DASH     #
+#    FLEET MANAGER     #
+########################
+@app.route('/fleet_manager', methods=['GET', 'POST'])
+# @login_required
+def fleet_manager():
+
+	fleet = get_entire_fleet()
+
+	if request.method == "POST":
+		if "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+		for SMI in fleet:
+			if SMI[0] in request.form:
+				return redirect(url_for('SMI_dash', SMI=SMI[0]))
+			elif (SMI[0] + "_cases") in request.form:
+				return redirect(url_for('SMI_cases', SMI=SMI[0]))
+
+	return render_template('fleet_manager.html', fleet=fleet)
+
+
+########################
+#     REPORT DASH      #
 ########################
 @app.route('/reports_dash', methods=['GET', 'POST'])
 # @login_required
@@ -158,66 +181,97 @@ def reports_dash():
 # @login_required
 def SMI_dash(SMI):
 
-	img = io.BytesIO()
+	
 	dates = get_all_dates()
 	SMI_monthly_forecast = get_SMI_forecast(SMI)
 	SMI_daily_forecast = monthly_to_daily(SMI_monthly_forecast)
+	SMI_daily_forecast_ints = []
+	for fc in SMI_daily_forecast:
+		fc = '{0:.2f}'.format(fc)
+		SMI_daily_forecast_ints.append(fc)
 	SMI_daily_gen = get_SMI_daily_gen(SMI)
-	SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
-	average_perf = '{:.2%}'.format(get_ave_perf(SMI_daily_perf))
-	site_off_count = get_site_off(SMI_daily_gen)
-	perf_variance = '{:.2%}'.format(np.var(SMI_daily_perf))
-	
-	stn_checker = get_SMI_weather_stn(SMI)
+	if (SMI_daily_gen):
+		SMI_daily_perf = get_daily_perf(SMI, SMI_daily_gen, SMI_daily_forecast, dates)
+		average_perf = '{:.2%}'.format(get_ave_perf(SMI_daily_perf))
+		site_off_count = get_site_off(SMI_daily_gen)
+		perf_variance = '{:.2%}'.format(np.var(SMI_daily_perf))
+		
+		stn_checker = get_SMI_weather_stn(SMI)
 
-	if (stn_checker):
+		if (stn_checker):
 
-		SMI_weather_stn = get_SMI_weather_stn(SMI)[0][0]
-		stn_solar_perf = get_stn_solar_perf(SMI_weather_stn, "solar")
-		stn_temp_perf = get_stn_solar_perf(SMI_weather_stn, "temp")
-		relevant_solar_perf = filter_weather(stn_solar_perf, dates)
-		relevant_temp_perf = filter_weather(stn_temp_perf, dates)
+			SMI_weather_stn = get_SMI_weather_stn(SMI)[0][0]
+			stn_solar_perf = get_stn_solar_perf(SMI_weather_stn, "solar")
+			stn_temp_perf = get_stn_solar_perf(SMI_weather_stn, "temp")
+			relevant_solar_perf = filter_weather(stn_solar_perf, dates)
+			relevant_temp_perf = filter_weather(stn_temp_perf, dates)
 
-		solar_vals = get_weather_vals(relevant_solar_perf, len(dates))
-		temp_vals = get_weather_vals(relevant_temp_perf, len(dates))
+			solar_vals = get_weather_vals(relevant_solar_perf, len(dates))
+			temp_vals = get_weather_vals(relevant_temp_perf, len(dates))
 
-		average_solar = get_ave_condition(SMI_weather_stn, "solar")
-		relevant_ave_solar = filter_ave(average_solar, dates)
-		solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_weather_stn, relevant_ave_solar)
-		solar_correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
-		closest_weather_stn = get_closest_stn2(SMI)[0][0]
+			average_solar = get_ave_condition(SMI_weather_stn, "solar")
+			relevant_ave_solar = filter_ave(average_solar, dates)
+			solar_cond_vs_ave = compare_cond_to_ave(solar_vals, dates, SMI_weather_stn, relevant_ave_solar)
+			solar_correlation = np.corrcoef(SMI_daily_perf, solar_cond_vs_ave)
+			closest_weather_stn = get_closest_stn2(SMI)[0][0]
 
-		# 1.60934 is converting mile to km
-		SMI_stn_distance = int(1.60934*get_SMI_stn_dist2(SMI)[0][0])
+			# 1.60934 is converting mile to km
+			SMI_stn_distance = int(1.60934*get_SMI_stn_dist2(SMI)[0][0])
 
-		temp_effect = get_temp_effect(temp_vals)
+			temp_effect = get_temp_effect(temp_vals)
 
-		temp_adjusted = temp_adjust(SMI_daily_perf, temp_effect)
+			temp_adjusted = temp_adjust(SMI_daily_perf, temp_effect)
 
-		perf_x = np.array(temp_adjusted)
-		solar_y = np.array(solar_cond_vs_ave)
+			perf_x = np.array(temp_adjusted)
+			solar_y = np.array(solar_cond_vs_ave)
 
-		if not all(val==0 for val in perf_x):
-			sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
-			sol_adjusted_perf = adjust_perf(temp_adjusted, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
-			ave_adjusted = get_ave_perf(sol_adjusted_perf)
+			if not all(val==0 for val in perf_x):
+				sol_slope, sol_intercept, sol_r_value, sol_p_value, sol_std_err = stats.linregress(perf_x, solar_y)
+				sol_adjusted_perf = adjust_perf(temp_adjusted, solar_cond_vs_ave, sol_slope, sol_intercept, sol_p_value, sol_r_value)
+				ave_adjusted = get_ave_perf(sol_adjusted_perf)
+		else:
+			ave_adjusted = ""
+			solar_correlation = [["",""]]
+			sol_adjusted_perf = create_list_of_blanks(len(dates))
+			solar_cond_vs_ave = create_list_of_blanks(len(dates))
+			temp_effect = create_list_of_blanks(len(dates))
+
+		img = io.BytesIO()
+
+		y = sol_adjusted_perf
+		x = numbered_list(len(sol_adjusted_perf))
+		plt.plot(x,y)
+		plt.savefig(img, format='png')
+		img.seek(0)
+
+		plot_url = base64.b64encode(img.getvalue()).decode()
+
 	else:
-		ave_adjusted = ""
-		solar_correlation = [["",""]]
-		sol_adjusted_perf = create_list_of_blanks(len(dates))
-		solar_cond_vs_ave = create_list_of_blanks(len(dates))
-		temp_effect = create_list_of_blanks(len(dates))
+		plot_url = None
+	img2 = io.BytesIO()
+	y2 = SMI_daily_forecast_ints
+	x2 = numbered_list(len(SMI_daily_forecast_ints))
+	plt.plot(x2,y2)
+	# plt.
+	plt.savefig(img2, format='png')
+	img2.seek(0)
 
-	y = sol_adjusted_perf
-	x = numbered_list(len(sol_adjusted_perf))
-	plt.plot(x,y)
-	plt.savefig(img, format='png')
-	img.seek(0)
-
-	plot_url = base64.b64encode(img.getvalue()).decode()
+	plot_url2 = base64.b64encode(img2.getvalue()).decode()
 
 	if request.method == "POST":
 		if "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
 
-	return render_template('smi_dash.html', plot_url=plot_url)
+	return render_template('smi_dash.html', df=SMI_daily_forecast_ints, plot_url=plot_url, plot_url2=plot_url2)
+
+########################
+#    SMI CASES DASH    #
+########################
+@app.route('/<SMI>_cases', methods=['GET', 'POST'])
+# @login_required
+def SMI_cases(SMI):
+
+	if request.method == "POST":
+		if "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+	return render_template('smi_cases.html')

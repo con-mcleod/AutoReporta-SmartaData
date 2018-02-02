@@ -4,34 +4,58 @@
 
 {% block body_contents %}
 
+<style>
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: #fc9c4e;
+    color: white;
+}
+</style>
+
 	<center>
-		<form method="POST">
-			<h3>AutoReporta & SmartaData</h3>
-			<p>Encompass file:</p> 
-			<input type="file" name="encompass_csv" accept=".csv"/>
+
+		<h3>AutoReporta & SmartaData</h3>
+
+		<Form method="POST">
+
+			<table style="border: 1px solid black;">
+				<th>Encompass</th>
+				<th>Salesforce ECS</th>
+				<th>Salesforce Cases</th>
+				<tr>
+					
+					<td class="c1">
+						<p>Encompass file:</p><input type="file" name="encompass_csv" accept=".csv"/>
+						<p>Select time period:</p>
+						<select>
+							<option value="1min">1min</option>
+							<option value="30min">30min</option>
+							<option value="hourly">hourly</option>
+							<option value="daily">daily</option>
+							<option value="monthly">monthly</option>
+						</select>
+					</td>
+					<td class="c2">
+						<p>Salesforce ECS File:</p><input type="file" name="salesforce_ecs" accept=".csv"/></td>
+					<td class="c3">
+						<p>Salesforce Cases File:</p><input type="file" name="salesforce_cases" accept=".csv"/></td>
+					</td>
+
+				</tr>
+				
+			</table>
+
 			<br>
-			<p>Select time period:</p>
-			<select>
-				<option value="1min">1min</option>
-				<option value="30min">30min</option>
-				<option value="hourly">hourly</option>
-				<option value="daily">daily</option>
-				<option value="monthly">monthly</option>
-			</select>
-
-			<br><br>
-
-			<p>Salesforce file:</p> 
-			<input type="file" name="salesforce_csv" accept=".csv"/>
-
-			<br><br>
-
 			<button type="submit" name="bom_grab">Bom grabber</button>
-
-			<br><br>
-
+			<button type="submit" name="fleet_manager">Site Manager</button>
 			<button type="submit" name="run_reports">Run reports</button>
-		</form>
+		</Form>
 	</center>
 
 {% endblock %}

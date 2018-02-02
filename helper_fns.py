@@ -106,6 +106,13 @@ def find_closest_stn(SMI, SMI_latitude, SMI_longitude):
 #                            #
 ##############################
 
+# return entire fleet of SMIs
+def get_entire_fleet():
+	query = "SELECT distinct(SMI) from smi_details"
+	payload = None
+	result = dbselect(query, payload)
+	return result
+
 # return all SMIs from encompass report
 def get_all_SMIs():
 	query = "SELECT distinct(SMI) from enc_values"
@@ -425,13 +432,13 @@ def load_user(user_id):
 	return user	
 
 def check_uid(uid):
-	if uid == "Connor" or uid == "Tasha" or uid == "Ovi":
+	if uid == "origin":
 		return True
 	else:
 		return False
 
 def check_pw(uid,pw):
-	if (uid == "Connor" or uid == "Tasha" or uid == "Ovi") and pw == ";":
+	if uid == "origin" and pw == ";":
 		user = get_user(uid)
 		login_user(user)
 		return True
