@@ -5,7 +5,15 @@
 {% block body_contents %}
 
 	<center>
+
+		<h3>AutoReporta & SmartaData</h3>
+		
 		<form method="POST">
+			<button type="submit" name="dashboard">Home</button>
+			<button type="submit" name="fleet_mgr">Fleet Manager</button>
+			<button type="submit" name="report_setup">Report set-up</button>
+			<br><br>
+
 			<br>
 			City: <input type="text" name="city"><br><br>
 			Datatype:
@@ -17,7 +25,7 @@
 			<button type="submit"><a href="http://www.bom.gov.au/climate/data/index.shtml" target="_blank">Get URL</a></button><br>
 			URL: <input type="text" name="URL">
 			<br><br>
-			<button type="submit" name="dashboard">Return to Dashboard</button>
+			
 			<button type="submit" name="bom_script">Grab bom data</button>
 		</form>
 	</center>

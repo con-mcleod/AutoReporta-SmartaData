@@ -10,17 +10,17 @@ th, td {
     padding: 8px;
 }
 
-tr:nth-child(even){background-color: #f2f2f2}
+tr:nth-child(even){Background-color: #f2f2f2}
 
 th {
-    background-color: #fc9c4e;
+    Background-color: #fc9c4e;
     color: white;
 }
 
 #myInput {
-    background-image: url('/css/searchicon.png'); /* Add a search icon to input */
-    background-position: 10px 12px; /* Position the search icon */
-    background-repeat: no-repeat; /* Do not repeat the icon image */
+    Background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+    Background-position: 10px 12px; /* Position the search icon */
+    Background-repeat: no-repeat; /* Do not repeat the icon image */
     font-size: 16px; /* Increase font-size */
     padding: 12px 20px 12px 40px; /* Add some padding */
     border: 1px solid #ddd; /* Add a grey border */
@@ -44,8 +44,8 @@ th {
 }
 
 #myTable tr.header, #myTable tr:hover {
-    /* Add a grey background color to the table header and on hover */
-    background-color: #fc9c4e;
+    /* Add a grey Background color to the table header and on hover */
+    Background-color: #fc9c4e;
 }
 </style>
 
@@ -76,11 +76,38 @@ function myFunction() {
 
 	<center>
 
+    <h3>AutoReporta & SmartaData</h3>
+
 		<Form method="POST">
-			<button type="submit" name="dashboard">Return to dashboard</button>
+			<button type="submit" name="dashboard">Home</button>
+      <button type="submit" name="fleet_mgr">Fleet Manager</button>
+      <button type="submit" name="report_setup">Report set-up</button>
 		</Form>
 
 		<br>
+
+
+    <h5>Previous Monthly Reports</h5>
+    <select>
+        <option value="jan_perf">Jan</option>
+        <option value="feb_perf">Feb</option>
+        <option value="mar_perf">Mar</option>
+        <option value="apr_perf">Apr</option>
+        <option value="may_perf">May</option>
+        <option value="jun_perf">Jun</option>
+        <option value="jul_perf">Jul</option>
+        <option value="aug_perf">Aug</option>
+        <option value="sep_perf">Sep</option>
+        <option value="oct_perf">Oct</option>
+        <option value="nov_perf">Nov</option>
+        <option value="dec_perf">Dec</option>
+    </select>
+    <Form method="POST">
+      <button type="submit" name="monthly_report">Get report</button>
+    </Form>
+
+
+    <br><br>
 
 		<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search...">
 

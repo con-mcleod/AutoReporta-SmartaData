@@ -49,22 +49,22 @@ wb = Workbook()
 ws = wb.active
 ws.title = "Daily Report"
 
-# initiate summary data worksheet
-ws2 = wb.create_sheet()
-ws2.title = "Summary Stats"
-
 # initiate adjusted daily data worksheet
-ws3 = wb.create_sheet()
-ws3.title = "Daily Unadjusted"
+ws2 = wb.create_sheet()
+ws2.title = "Daily Unadjusted"
 
 # initiate encompass daily data worksheet
+ws3 = wb.create_sheet()
+ws3.title = "Daily Adjusted"
+
+# initiate summary data worksheet
 ws4 = wb.create_sheet()
-ws4.title = "Daily Adjusted"
+ws4.title = "Summary Stats"
 
 # merge Summary Stats headings and center
-ws2.merge_cells('A1:G1')
-ws2.merge_cells('H1:K1')
-for cell in ws2['1:1']:
+ws4.merge_cells('A1:G1')
+ws4.merge_cells('H1:K1')
+for cell in ws4['1:1']:
 	cell.alignment = Alignment(horizontal='center')
 
 # bold the top 2 rows and center the top row
@@ -72,8 +72,8 @@ bolded_font = Font(bold=True)
 for i in range(1,24+5*len(dates)+1):
 	ws.cell(row=1, column=i).font = bolded_font
 	ws.cell(row=2, column=i).font = bolded_font
-	ws2.cell(row=1, column=i).font = bolded_font
-	ws2.cell(row=2, column=i).font = bolded_font
+	ws4.cell(row=1, column=i).font = bolded_font
+	ws4.cell(row=2, column=i).font = bolded_font
 for cell in ws['1:1']:
 	cell.alignment = Alignment(horizontal='center')
 
@@ -95,15 +95,15 @@ for i in range(0,len(dates)*5, 5):
 for i in range(0,len(dates)):
 	adj_perf = get_column_letter(13+i)
 	adj_perf = str(adj_perf) + "3:" + str(adj_perf) + str(num_rows-1)
-	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
-	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	ws2.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws2.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 
 # apply conditional formatting to adjusted daily performance sheet
 for i in range(0,len(dates)):
 	adj_perf = get_column_letter(13+i)
 	adj_perf = str(adj_perf) + "3:" + str(adj_perf) + str(num_rows-1)
-	# ws4.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
-	ws4.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+	# ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+	ws3.conditional_formatting.add(adj_perf,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 	
 
 # apply conditional formatting to summary stats sheet
@@ -111,16 +111,16 @@ for i in range(1, 20):
 	to_format = get_column_letter(i)
 	to_format = str(to_format) + "3:" + str(to_format) + str(num_rows-1)
 	if i == 8:
-		ws2.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
-		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
+		ws4.conditional_formatting.add(to_format,CellIsRule(operator='lessThan', formula=['.7'], fill=redFill))
+		ws4.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['1.3'], fill=greenFill))
 	elif i == 9:
-		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
+		ws4.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 	elif i == 10:
-		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
+		ws4.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['.2'], fill=redFill))
 	elif i == 11:
-		ws2.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
+		ws4.conditional_formatting.add(to_format,CellIsRule(operator='greaterThan', formula=['5'], fill=redFill))
 	elif i == 12:
-		ws2.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
+		ws4.conditional_formatting.add(to_format,ColorScaleRule(start_type='min', start_color='FA5858', mid_type='percentile', mid_value=50, mid_color='F4fa58', end_type='max', end_color='9Afe2e'))
 
 # merge and center daily data headings
 ws.merge_cells('A1:L1')
@@ -172,22 +172,22 @@ for SMI in SMIs:
 		ws.cell(row=row_count+2, column=col_count+24).value = "Dec"
 
 		# Salesforce and summary stats headings
-		ws2.cell(row=row_count+1, column=col_count+1).value = "Salesforce Details"
-		ws2.cell(row=row_count+1, column=col_count+8).value = "Summary Stats"
-		ws2.cell(row=row_count+2, column=col_count+1).value = "SMI"
-		ws2.cell(row=row_count+2, column=col_count+2).value = "ECS"
-		ws2.cell(row=row_count+2, column=col_count+3).value = "Address"
-		ws2.cell(row=row_count+2, column=col_count+4).value = "State"
-		ws2.cell(row=row_count+2, column=col_count+5).value = "Site Status"
-		ws2.cell(row=row_count+2, column=col_count+6).value = "PV Size"
-		ws2.cell(row=row_count+2, column=col_count+7).value = "Export Control"
-		ws2.cell(row=row_count+2, column=col_count+8).value = "Enc Perf"
-		ws2.cell(row=row_count+2, column=col_count+9).value = "Ave Adj Perf"
-		ws2.cell(row=row_count+2, column=col_count+10).value = "Perf variance"
-		ws2.cell(row=row_count+2, column=col_count+11).value = "Site off #days"
-		ws2.cell(row=row_count+2, column=col_count+12).value = "Perf & Solar-rad Correlation"
-		ws2.cell(row=row_count+2, column=col_count+13).value = "Closest stn"
-		ws2.cell(row=row_count+2, column=col_count+14).value = "Distance from stn"
+		ws4.cell(row=row_count+1, column=col_count+1).value = "Salesforce Details"
+		ws4.cell(row=row_count+1, column=col_count+8).value = "Summary Stats"
+		ws4.cell(row=row_count+2, column=col_count+1).value = "SMI"
+		ws4.cell(row=row_count+2, column=col_count+2).value = "ECS"
+		ws4.cell(row=row_count+2, column=col_count+3).value = "Address"
+		ws4.cell(row=row_count+2, column=col_count+4).value = "State"
+		ws4.cell(row=row_count+2, column=col_count+5).value = "Site Status"
+		ws4.cell(row=row_count+2, column=col_count+6).value = "PV Size"
+		ws4.cell(row=row_count+2, column=col_count+7).value = "Export Control"
+		ws4.cell(row=row_count+2, column=col_count+8).value = "Enc Perf"
+		ws4.cell(row=row_count+2, column=col_count+9).value = "Ave Adj Perf"
+		ws4.cell(row=row_count+2, column=col_count+10).value = "Perf variance"
+		ws4.cell(row=row_count+2, column=col_count+11).value = "Site off #days"
+		ws4.cell(row=row_count+2, column=col_count+12).value = "Perf & Solar-rad Correlation"
+		ws4.cell(row=row_count+2, column=col_count+13).value = "Closest stn"
+		ws4.cell(row=row_count+2, column=col_count+14).value = "Distance from stn"
 
 		# Daily data headings
 		for date in dates:
@@ -261,32 +261,32 @@ for SMI in SMIs:
 		# populate and format the summary stats sheet
 		for detail in SMI_details:
 
-			ws2.cell(row=row_count+1, column=col_count+1).value = detail[0]
-			ws2.cell(row=row_count+1, column=col_count+2).value = detail[2]
-			ws2.cell(row=row_count+1, column=col_count+3).value = detail[6]
-			ws2.cell(row=row_count+1, column=col_count+4).value = detail[7]
-			ws2.cell(row=row_count+1, column=col_count+5).value = detail[8]
-			ws2.cell(row=row_count+1, column=col_count+6).value = detail[4]
-			ws2.cell(row=row_count+1, column=col_count+7).value = detail[11]
-			ws2.cell(row=row_count+1, column=col_count+8).border = leftBorder
-			ws2.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
-			ws2.cell(row=row_count+1, column=col_count+8).value = average_perf
-			ws2.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
-			ws2.cell(row=row_count+1, column=col_count+9).value = ave_adjusted
-			ws2.cell(row=row_count+1, column=col_count+10).number_format = '0.00%'
-			ws2.cell(row=row_count+1, column=col_count+10).value = perf_variance
-			ws2.cell(row=row_count+1, column=col_count+11).value = site_off_count
-			ws2.cell(row=row_count+1, column=col_count+12).number_format = '0.00%'
-			ws2.cell(row=row_count+1, column=col_count+12).value = solar_correlation[0][1]
-			ws2.cell(row=row_count+1, column=col_count+13).value = closest_weather_stn
-			ws2.cell(row=row_count+1, column=col_count+14).value = SMI_stn_distance
+			ws4.cell(row=row_count+1, column=col_count+1).value = detail[0]
+			ws4.cell(row=row_count+1, column=col_count+2).value = detail[2]
+			ws4.cell(row=row_count+1, column=col_count+3).value = detail[6]
+			ws4.cell(row=row_count+1, column=col_count+4).value = detail[7]
+			ws4.cell(row=row_count+1, column=col_count+5).value = detail[8]
+			ws4.cell(row=row_count+1, column=col_count+6).value = detail[4]
+			ws4.cell(row=row_count+1, column=col_count+7).value = detail[11]
+			ws4.cell(row=row_count+1, column=col_count+8).border = leftBorder
+			ws4.cell(row=row_count+1, column=col_count+8).number_format = '0.00%'
+			ws4.cell(row=row_count+1, column=col_count+8).value = average_perf
+			ws4.cell(row=row_count+1, column=col_count+9).number_format = '0.00%'
+			ws4.cell(row=row_count+1, column=col_count+9).value = ave_adjusted
+			ws4.cell(row=row_count+1, column=col_count+10).number_format = '0.00%'
+			ws4.cell(row=row_count+1, column=col_count+10).value = perf_variance
+			ws4.cell(row=row_count+1, column=col_count+11).value = site_off_count
+			ws4.cell(row=row_count+1, column=col_count+12).number_format = '0.00%'
+			ws4.cell(row=row_count+1, column=col_count+12).value = solar_correlation[0][1]
+			ws4.cell(row=row_count+1, column=col_count+13).value = closest_weather_stn
+			ws4.cell(row=row_count+1, column=col_count+14).value = SMI_stn_distance
 
 		# add Salesforce data to daily sheets
 		for x in range(0, len(SMI_details)):
 			for detail in SMI_details[x]:
 				ws.cell(row=row_count+1, column=col_count+1).value = detail
+				ws2.cell(row=row_count+1, column=col_count+1).value = detail
 				ws3.cell(row=row_count+1, column=col_count+1).value = detail
-				ws4.cell(row=row_count+1, column=col_count+1).value = detail
 				col_count += 1
 
 		# add forecast data to daily sheet
@@ -302,20 +302,20 @@ for SMI in SMIs:
 		col3_count = col_count - 12
 		for z in range(0, len(SMI_daily_gen)):
 			for gen in SMI_daily_gen[z]:
-				ws3.cell(row=row_count+1, column=col3_count+1).number_format = '0.00%'
-				ws3.cell(row=row_count+1, column=col3_count+1).value = SMI_daily_perf[z]
+				ws2.cell(row=row_count+1, column=col3_count+1).number_format = '0.00%'
+				ws2.cell(row=row_count+1, column=col3_count+1).value = SMI_daily_perf[z]
 				col3_count += 1
 
 		# populate the adjusted performance sheet
 		col4_count = col_count - 12
 		for z in range(0, len(SMI_daily_gen)):
 			for gen in SMI_daily_gen[z]:
-				ws4.cell(row=row_count+1, column=col4_count+1).number_format = '0.00%'
-				ws4.cell(row=row_count+1, column=col4_count+1).value = sol_adjusted_perf[z]
-				if ws4.cell(row=row_count+1, column=col4_count+1).value in [None,'','None']:
+				ws3.cell(row=row_count+1, column=col4_count+1).number_format = '0.00%'
+				ws3.cell(row=row_count+1, column=col4_count+1).value = sol_adjusted_perf[z]
+				if ws3.cell(row=row_count+1, column=col4_count+1).value in [None,'','None']:
 					pass
-				elif ws4.cell(row=row_count+1, column=col4_count+1).value < .7:
-					ws4.cell(row=row_count+1, column=col4_count+1).fill = redFill
+				elif ws3.cell(row=row_count+1, column=col4_count+1).value < .7:
+					ws3.cell(row=row_count+1, column=col4_count+1).fill = redFill
 
 				col4_count += 1
 

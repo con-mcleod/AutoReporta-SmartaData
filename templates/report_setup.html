@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+
+
+{% block body_contents %}
+
+<style>
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){Background-color: #f2f2f2}
+
+th {
+    Background-color: #fc9c4e;
+    color: white;
+}
+</style>
+
+	<center>
+
+		<h3>AutoReporta & SmartaData</h3>
+
+		<Form method="POST">
+
+			<button type="submit" name="dashboard">Home</button>
+			<button type="submit" name="fleet_manager">Fleet Manager</button>
+			<button type="submit" name="report_setup">Report set-up</button>
+			
+			<br>
+			<br>
+
+			<table style="border: 1px solid black;">
+				<th>Encompass</th>
+				<th>Salesforce ECS</th>
+				<th>Salesforce Cases</th>
+				<th>Bureau of Meteorology</th>
+				<tr>
+					
+					<td class="c1">
+						<p>Encompass file:</p><input type="file" name="encompass_csv" accept=".csv"/>
+						<p>Select time period:</p>
+						<select>
+							<option value="1min">1min</option>
+							<option value="30min">30min</option>
+							<option value="hourly">hourly</option>
+							<option value="daily">daily</option>
+							<option value="monthly">monthly</option>
+						</select>
+					</td>
+					<td class="c2">
+						<p>Salesforce ECS File:</p><input type="file" name="salesforce_ecs" accept=".csv"/></td>
+					<td class="c3">
+						<p>Salesforce Cases File:</p><input type="file" name="salesforce_cases" accept=".csv"/></td>
+					</td>
+					<td class="c4">
+						<p>Grab weather station here:</p>
+						<button type="submit" name="bom_grab">Bom grabber</button>
+					</td>
+
+				</tr>
+				
+			</table>
+
+			<br>
+			<button type="submit" name="report_setup">Run report</button>
+		</Form>
+	</center>
+
+{% endblock %}

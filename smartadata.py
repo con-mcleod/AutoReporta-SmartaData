@@ -43,8 +43,10 @@ def dashboard():
 	if request.method == "POST":
 		if "bom_grab" in request.form:
 			return redirect(url_for('bom_grabber'))
-		elif "run_reports" in request.form:
-			return redirect(url_for('reports_dash'))
+		elif "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
 		elif "fleet_manager" in request.form:
 			return redirect(url_for('fleet_manager'))
 
@@ -60,8 +62,12 @@ def bom_grabber():
 	if request.method == "POST":
 		if "bom_script" in request.form:
 			return redirect(url_for('bom_grabber'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
 		elif "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
+		elif "fleet_manager" in request.form:
+			return redirect(url_for('fleet_manager'))
 
 	return render_template('bom_grabber.html')
 
@@ -77,6 +83,12 @@ def fleet_manager():
 	if request.method == "POST":
 		if "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
+		elif "fleet_manager" in request.form:
+			return redirect(url_for('fleet_manager'))
+		elif "monthly_report" in request.form:
+			return redirect(url_for('monthly_report'))
 		for SMI in fleet:
 			if SMI[0] in request.form:
 				return redirect(url_for('SMI_dash', SMI=SMI[0]))
@@ -85,13 +97,31 @@ def fleet_manager():
 
 	return render_template('fleet_manager.html', fleet=fleet)
 
+########################
+#     REPORT SETUP     #
+########################
+@app.route('/report_setup', methods=['GET', 'POST'])
+# @login_required
+def report_setup():
+
+	if request.method == "POST":
+		if "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+		elif "bom_grab" in request.form:
+			return redirect(url_for('bom_grabber'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_dash'))
+		elif "fleet_manager" in request.form:
+			return redirect(url_for('fleet_manager'))
+
+	return render_template('report_setup.html')
 
 ########################
 #     REPORT DASH      #
 ########################
-@app.route('/reports_dash', methods=['GET', 'POST'])
+@app.route('/report_dash', methods=['GET', 'POST'])
 # @login_required
-def reports_dash():
+def report_dash():
 	# uid = current_user.user_id
 	SMIs = get_all_SMIs()
 	dates = get_all_dates()
@@ -168,11 +198,15 @@ def reports_dash():
 	if request.method == "POST":
 		if "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
+		elif "fleet_manager" in request.form:
+			return redirect(url_for('fleet_manager'))
 		for SMI in SMIs:
 			if SMI[0] in request.form:
 				return redirect(url_for('SMI_dash', SMI=SMI[0]))
 
-	return render_template('reports_dash.html', SMIs_stats=SMIs_stats)
+	return render_template('report_dash.html', SMIs_stats=SMIs_stats)
 
 ########################
 #       SMI DASH       #
@@ -261,6 +295,10 @@ def SMI_dash(SMI):
 	if request.method == "POST":
 		if "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
+		elif "fleet_mgr" in request.form:
+			return redirect(url_for('fleet_manager'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
 
 	return render_template('smi_dash.html', df=SMI_daily_forecast_ints, plot_url=plot_url, plot_url2=plot_url2)
 
@@ -274,4 +312,50 @@ def SMI_cases(SMI):
 	if request.method == "POST":
 		if "dashboard" in request.form:
 			return redirect(url_for('dashboard'))
-	return render_template('smi_cases.html')
+		elif "fleet_mgr" in request.form:
+			return redirect(url_for('fleet_manager'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
+		elif "case1" in request.form:
+			return redirect(url_for('case_page'))
+	return render_template('smi_cases.html', SMI=SMI)
+
+########################
+#      CASE PAGE       #
+########################
+@app.route('/case_page', methods=['GET', 'POST'])
+# @login_required
+def case_page():
+
+
+	if request.method == "POST":
+		if "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+		elif "fleet_mgr" in request.form:
+			return redirect(url_for('fleet_manager'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
+	return render_template('case_page.html')
+
+
+########################
+#      CASE PAGE       #
+########################
+@app.route('/monthly_report', methods=['GET', 'POST'])
+# @login_required
+def monthly_report():
+
+
+	if request.method == "POST":
+		if "dashboard" in request.form:
+			return redirect(url_for('dashboard'))
+		elif "fleet_mgr" in request.form:
+			return redirect(url_for('fleet_manager'))
+		elif "report_setup" in request.form:
+			return redirect(url_for('report_setup'))
+	return render_template('monthly_report.html')
+
+
+
+
+
