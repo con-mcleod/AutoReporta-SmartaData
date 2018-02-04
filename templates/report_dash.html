@@ -18,6 +18,63 @@ th {
 }
 </style>
 
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("reportTable");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"; 
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+
 	<center>
 		<h3>AutoReporta & SmartaData</h3>
 
@@ -28,14 +85,16 @@ th {
 		</Form>
 		<br>
 
-		<table style="border: 1px solid black;">
-			<th>SMI</th>
-			<th>Unadjusted Perf</th>
-			<th>Adjusted Perf</th>
-			<th># off days</th>
-			<th>Perf variance</th>
-			<th>Closest Weather stn</th>
-			<th>Distance from stn</th>
+		<table id="reportTable" style="border: 1px solid black;">
+		<tr>
+			<th onclick="sortTable(0)">SMI</th>
+			<th onclick="sortTable(1)">Unadjusted Perf</th>
+			<th onclick="sortTable(2)">Adjusted Perf</th>
+			<th onclick="sortTable(3)"># off days</th>
+			<th onclick="sortTable(4)">Perf variance</th>
+			<th onclick="sortTable(5)">Closest Weather stn</th>
+			<th onclick="sortTable(6)">Distance from stn</th>
+		</tr>
 			{% for SMI in SMIs_stats %}
 			<tr>
 				<Form method="POST">
